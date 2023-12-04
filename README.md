@@ -1,6 +1,6 @@
 <h1 align="center">
     Terraria Computer
 </h1>
-<h2 align="center">
+<p align="center">
     RISC-V computer in Terraria
-</h2>
+</p>

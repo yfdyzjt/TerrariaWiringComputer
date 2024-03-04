@@ -32,10 +32,6 @@ function IsZero(data,bit)
 	end
 end
 
-if(bin.BaseStream.Length<Origin)then
-	return
-end
-
 bin.BaseStream.Position=Origin
 for line=0,MaxLine-1,1 do
 	for color=0,3,1 do

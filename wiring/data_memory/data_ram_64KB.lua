@@ -74,14 +74,12 @@ for row=0,MaxRow-1,1 do
 				x=sign.X+OffsetX+row*3+dir
 				y=sign.Y+OffsetY+line*24+bit*3
 				var=IsOne(data,bit)
-				if(IsOne(mesh,bit))then
-					if((row~=ActRow.row)or(dir~=ActRow.dir))then
-						var=not var
-					end
-					if(row==0 and dir==-1)then
-						SetLamp(x-2,y,true)
-						SetLamp(x-3,y,true)
-					end
+				if(row==0 and dir==-1)then
+					SetLamp(x-2,y,var)
+					SetLamp(x-3,y,var)
+				end
+				if(IsOne(mesh,bit)and((row~=ActRow.row)or(dir~=ActRow.dir)))then
+					var=not var
 				end
 				SetLamp(x,y,var)
 			end

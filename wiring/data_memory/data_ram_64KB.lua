@@ -6,7 +6,7 @@ MaxRow=1024
 MaxLine=32
 
 OffsetX=22
-OffsetY=26
+OffsetY=29
 
 ActRow={row,dir}
 ActRowData={}

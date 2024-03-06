@@ -3,12 +3,13 @@ WIRE_WRITE DATA_RAM_64KB
 Origin=0x100000
 
 MaxRow=1024
-MaxLine=256
+MaxLine=32
 
 OffsetX=22
 OffsetY=26
 
-ActRow={}
+ActRow={row,dir}
+ActRowData={}
 
 function GetLamp(x,y)
 	if(tiles[x][y].U==18)then
@@ -25,14 +26,6 @@ function SetLamp(x,y,var)
 		tiles[x][y].U=18
 	else
 		tiles[x][y].U=0
-	end
-end
-
-function InvLamp(x,y)
-	if(tiles[x][y].U==18)then
-		tiles[x][y].U=0
-	else
-		tiles[x][y].U=18
 	end
 end
 
@@ -56,39 +49,41 @@ end
 bin.BaseStream.Position=Origin
 for row=0,MaxRow-1,1 do
 	for dir=-1,1,2 do
-		bit=8
-		for line=0,MaxLine,1 do
-			x=sign.X+OffsetX+row*3+dir
-			y=sign.Y+OffsetY+line*3
-			if(line==0)then
-				isActRow=GetLamp(x,y)
-			else
-				if(bit==8)then
-					data=TryReadByte()
-					bit=0
-				end
-				var=IsOne(data,bit)
-				SetLamp(x,y,var)
-				if(isActRow)then
-					ActRow[line]=var
-				end
-				bit=bit+1
+		x=sign.X+OffsetX+row*3+dir
+		y=sign.Y+OffsetY-3
+		if(GetLamp(x,y))then
+			ActRow.row=row
+			ActRow.dir=dir
+			for line=0,MaxLine-1,1 do
+				ActRowData[line]=TryReadByte()
 			end
+			goto WriteData
 		end
+		bin.BaseStream.Position=bin.BaseStream.Position+256
 	end
 end
 
+::WriteData::
+bin.BaseStream.Position=Origin
 for row=0,MaxRow-1,1 do
 	for dir=-1,1,2 do
-		for line=1,MaxLine,1 do
-			x=sign.X+OffsetX+row*3+dir
-			y=sign.Y+OffsetY+line*3
-			if((row==0) and (ActRow[line]==true))then
-				InvLamp(x-2,y)
-				InvLamp(x-3,y)
-			end
-			if(ActRow[line]==true)then
-				InvLamp(x,y)
+		for line=0,MaxLine-1,1 do
+			data=TryReadByte()
+			mesh=ActRowData[line]
+			for bit=0,7,1 do
+				x=sign.X+OffsetX+row*3+dir
+				y=sign.Y+OffsetY+line*24+bit*3
+				var=IsOne(data,bit)
+				if(IsOne(mesh,bit))then
+					if((row~=ActRow.row)or(dir~=ActRow.dir))then
+						var=not var
+					end
+					if(row==0 and dir==-1)then
+						SetLamp(x-2,y,true)
+						SetLamp(x-3,y,true)
+					end
+				end
+				SetLamp(x,y,var)
 			end
 		end
 	end

@@ -1,6 +1,0 @@
-[submodule "tool/WireWrite"]
-	path = tool/WireWrite
-	url = https://github.com/yfdyzjt/WireWrite
-[submodule "tool/WireShark"]
-	path = tool/WireShark
-	url = https://github.com/cc004/wireshark

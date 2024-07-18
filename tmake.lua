@@ -64,6 +64,9 @@ function MakeLinkScript(hardwarename)
 
     sb.Append("}\n")
 
+    if not Directory.Exists("./system/bin/") then
+        Directory.CreateDirectory("./system/bin/")
+    end
     File.WriteAllText("./system/bin/" .. hardwarename .."_link.ld", sb.ToString())
 end
 

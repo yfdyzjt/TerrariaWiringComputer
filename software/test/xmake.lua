@@ -34,11 +34,6 @@ target(softwarename)
             -- os.exec("riscv-none-elf-objdump -D -b binary ./system/bin/" .. softwarename .. ".bin -mriscv > ./system/bin/" .. softwarename .. ".s")
 
             os.exec("tmake do \"Include(self,\\\"tmake.lua\\\").MakeWorld(\\\"" .. softwarename .. "\\\",\\\"" .. hardwarename .. "\\\")\"")
-
-            os.rm("build")
-            -- os.rm("system/bin/" .. hardwarename .. ".ld")
-            os.rm("system/bin/" .. softwarename .. ".elf")
-            -- os.rm("system/bin/" .. softwarename .. ".bin")
         end
     )
 target_end()

@@ -63,3 +63,10 @@ add_ldflags(
 includes(
     "software/test"
 )
+
+after_clean(
+    function(target)
+        os.rm("build")
+        os.rm("system/bin")
+    end
+)

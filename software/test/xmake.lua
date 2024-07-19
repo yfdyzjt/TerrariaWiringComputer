@@ -28,7 +28,7 @@ target(softwarename)
             os.exec("tmake do \"Include(self,\\\"tmake.lua\\\").MakeLinkScript(\\\"" .. hardwarename .. "\\\")\"")
         end
     )
-
+    
     after_build(
         function(target)
             os.exec("riscv-none-elf-objcopy -O binary ./system/" .. softwarename .. ".elf ./system/" .. softwarename .. ".bin")

@@ -1,14 +1,10 @@
 Using(self, "System.Drawing")
 
 function Link(world, parts)
-    local range : int = 100
-
-    local x : int = range
-    local y : int = range
+    local x : int = 100
+    local y : int = 100
     for _, part in ipairs(parts) do
-        local sch = part.Sch
-        local pos = Point(x, y)
-        Tool.Paste(world, pos, sch)
-        x = x + sch.MaxTilesX
+        Tool.Paste(world, Point(x, y), part.Sch)
+        x = x + part.Sch.MaxTilesX
     end
 end

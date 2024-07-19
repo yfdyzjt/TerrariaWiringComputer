@@ -1,3 +1,5 @@
+World = "terraria_computer_large"
+Link = "auto"
 Parts = {
     {
         Name = "cpu_rv32imc",
@@ -21,13 +23,10 @@ Parts = {
     {
         Name = "driver_target_x100_6kHz",
         Type = "driver",
-        Origin = 4095 << 20,
-        Length = 1,
-    }
+    },
 }
 
 local origin = 0
-
 for _, part in ipairs(Parts) do
     if part.Type ~= "cpu" and part.Type ~= "driver" then
         part.Origin = origin << 20

@@ -12,9 +12,16 @@ set_toolchains("riscv-none-elf")
 set_plat("cross")
 set_arch("riscv")
 
-set_targetdir("system/bin")
+set_targetdir("system")
 
-add_files("system/src/start.s", "system/src/reset.c");
+includes("software/*")
+
+after_clean(
+    function(target)
+        os.rm("build")
+        os.rm("system")
+    end
+)
 
 add_cflags(
     "-Os",
@@ -58,15 +65,4 @@ add_ldflags(
     "--specs=nosys.specs",
     "-flto",
     {force = true}
-)
-
-includes(
-    "software/test"
-)
-
-after_clean(
-    function(target)
-        os.rm("build")
-        os.rm("system/bin")
-    end
 )

@@ -6,12 +6,14 @@ target(softwarename)
 
     set_filename(softwarename .. ".elf")
 
+    add_files("entry/start.s", "entry/reset.c")
+
     add_files("src/**.c")
     add_includedirs("include")
 
-    add_ldflags("-Wl,-T,./system/bin/" .. hardwarename .. "_link.ld")
+    add_ldflags("-Wl,-T,./system/" .. hardwarename .. "_link.ld")
 
-    includes("../../hardware/src/" .. hardwarename .. ".lua")
+    includes("../../hardware/module/" .. hardwarename .. ".lua")
     for _, part in ipairs(Parts) do
         if part.Type ~= "cpu" and part.Type ~= "memory_ins" and part.Type ~= "driver" then
             add_defines(
@@ -29,10 +31,8 @@ target(softwarename)
 
     after_build(
         function(target)
-            os.exec("riscv-none-elf-objcopy -O binary ./system/bin/" .. softwarename .. ".elf ./system/bin/" .. softwarename .. ".bin")
-            os.exec("riscv-none-elf-size -Ax ./system/bin/" .. softwarename .. ".elf")
-            -- os.exec("riscv-none-elf-objdump -D -b binary ./system/bin/" .. softwarename .. ".bin -mriscv > ./system/bin/" .. softwarename .. ".s")
-
+            os.exec("riscv-none-elf-objcopy -O binary ./system/" .. softwarename .. ".elf ./system/" .. softwarename .. ".bin")
+            os.exec("riscv-none-elf-size -Ax ./system/" .. softwarename .. ".elf")
             os.exec("tmake do \"Include(self,\\\"tmake.lua\\\").MakeWorld(\\\"" .. softwarename .. "\\\",\\\"" .. hardwarename .. "\\\")\"")
         end
     )

@@ -1,9 +1,8 @@
 Using(self, "System.IO")
 Using(self, "System.Text")
-Using(self, "System.Drawing")
 
 function MakeLinkScript(hardwarename)
-    local parts = Include(self,"./hardware/src/" .. hardwarename .. ".lua").Parts
+    local parts = Include(self,"./hardware/module/" .. hardwarename .. ".lua").Parts
 
     local sb = StringBuilder()
 
@@ -67,10 +66,10 @@ function MakeLinkScript(hardwarename)
 
     sb.Append("}\n")
 
-    if not Directory.Exists("./system/bin/") then
-        Directory.CreateDirectory("./system/bin/")
+    if not Directory.Exists("./system/") then
+        Directory.CreateDirectory("./system/")
     end
-    File.WriteAllText("./system/bin/" .. hardwarename .."_link.ld", sb.ToString())
+    File.WriteAllText("./system/" .. hardwarename .."_link.ld", sb.ToString())
 end
 
 local function MakeSch(part, bin)
@@ -91,33 +90,25 @@ local function MakeSch(part, bin)
 end
 
 function MakeWorld(softwarename, hardwarename)
-    print("Start make world")
+    local mode = Include(self, "./hardware/module/" .. hardwarename .. ".lua")
 
-    local parts = Include(self, "./hardware/src/" .. hardwarename .. ".lua").Parts
-
-    local fs = FileStream("./system/bin/" .. softwarename .. ".bin", FileMode.Open)
+    local fs = FileStream("./system/" .. softwarename .. ".bin", FileMode.Open)
     local br = BinaryReader(fs)
 
-    local world = LoadWorld("./hardware/world/terraria_computer_base.wld")
+    print("Start load world: " .. mode.World)
+    local world = LoadWorld("./hardware/world/" .. mode.World .. ".wld")
 
-    local range : int = 100
-
-    local x : int = range
-    local y : int = range
-
-    for _, part in ipairs(parts) do
+    for _, part in ipairs(mode.Parts) do
         print("Start make part: " .. part.Name)
-        local sch = MakeSch(part, br)
-        local pos = Point(x, y)
-        Tool.Paste(world, pos, sch)
-        x = x + sch.MaxTilesX
+        part.Sch = MakeSch(part, br)
     end
 
     br.Close()
     fs.Close()
 
-    world.Name = "terraria_computer"
-    SaveWorld(world, "./system/bin/terraria_computer.wld")
+    print("Start link part to world")
+    Include(self, "./hardware/link/" .. mode.Link .. ".lua").Link(world, mode.Parts)
 
-    print("Finish make world")
+    print("Start save world")
+    SaveWorld(world, "./system/" .. mode.World .. ".wld")
 end

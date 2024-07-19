@@ -15,17 +15,20 @@ function MakeLinkScript(hardwarename)
     sb.Append("{\n")
     for _, part in ipairs(parts) do
         if part.Type == "memory_ins" or part.Type == "memory_data" then
-            sb.Append("\t" .. part.Name.ToUpper() .. " (" .. part.Permission .. ") : ORIGIN = " .. cast(string, part.Origin) .. ", LENGTH = " .. cast(string, part.Length) .. "\n")
-        end
-
-        if part.Type == "memory_ins" then
-            ins_name = part.Name.ToUpper() 
-        elseif part.Type == "memory_data" then
-            if part.Permission == "rw" then
-                data_ram_name = part.Name.ToUpper() 
-            elseif part.Permission == "r" then
-                data_rom_name = part.Name.ToUpper() 
+            local permission : string = ""
+            if part.Type == "memory_ins" then
+                permission = "x"
+                ins_name = part.Name.ToUpper() 
+            else
+                if string.find(part.Name, "rom") then
+                    permission = "r"
+                    data_rom_name = part.Name.ToUpper() 
+                elseif string.find(part.Name, "ram") then
+                    permission = "rw"
+                    data_ram_name = part.Name.ToUpper() 
+                end
             end
+            sb.Append("\t" .. part.Name.ToUpper() .. " (" .. permission .. ") : ORIGIN = " .. cast(string, part.Origin) .. ", LENGTH = " .. cast(string, part.Length) .. "\n")
         end
     end
     if data_rom_name == "" then

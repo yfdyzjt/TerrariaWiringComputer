@@ -7,26 +7,22 @@ Parts = {
         Name = "ins_rom_256KB",
         Type = "memory_ins",
         Length = 256 << 10,
-        Permission = "x"
     },
     {
         Name = "data_ram_64KB",
         Type = "memory_data",
         Length = 64 << 10,
-        Permission = "rw"
     },
     {
         Name = "display_96_64",
         Type = "output",
         Length = 1 << 10,
-        Permission = "rw"
     },
     {
         Name = "driver_target_x100_6kHz",
         Type = "driver",
         Origin = 4095 << 20,
         Length = 1,
-        Permission = "w"
     }
 }
 

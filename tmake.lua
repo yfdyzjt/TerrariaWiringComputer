@@ -78,9 +78,8 @@ local function MakeSch(part, bin)
     local sch = LoadSchematic("./hardware/wiring/**/" .. part.Name .. ".sch")
 
     if env.AddrPos then
-        local pos : table = env.AddrPos
-        for bit = 1, 12, 1 do
-            Tool.SetLogicLamp(sch.Tile[pos[bit][1], pos[bit][2]], Tool.IsZero(part.Origin, bit + 19))
+        for bit, pos in ipairs(env.AddrPos) do
+            Tool.SetLogicLamp(sch.Tile[pos[1], pos[2]], Tool.IsZero(part.Origin, bit + 19))
         end
     end
 

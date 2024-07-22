@@ -1,5 +1,5 @@
 World = "terraria_computer_large"
-Link = "auto"
+Link = "semi_auto"
 Parts = {
     {
         Name = "cpu_rv32imc",
@@ -16,12 +16,22 @@ Parts = {
         Length = 64 << 10,
     },
     {
+        Name = "data_rom_256KB",
+        Type = "memory_data",
+        Length = 256 << 10,
+    },
+    {
         Name = "display_96_64",
         Type = "output",
         Length = 1 << 10,
     },
     {
-        Name = "driver_target_x100_6kHz",
+        Name = "power_switch",
+        Type = "input",
+        Length = 0,
+    },
+    {
+        Name = "driver_portal_gun_station_x20_6.96kHz",
         Type = "driver",
     },
 }

@@ -17,7 +17,7 @@ option("soft")
 option_end()
 
 option("hard")
-    set_default("full")
+    set_default("mini")
 option_end()
 
 target("system")
@@ -27,8 +27,8 @@ target("system")
 
     if software and hardware then
         set_kind("binary") 
-        set_targetdir("system")
 
+        set_targetdir("system")
         set_filename(software .. ".elf")
 
         add_files("hardware/entry/start.s")

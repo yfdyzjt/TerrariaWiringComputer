@@ -2,7 +2,7 @@
   <h1>泰拉瑞亚电路计算机</h1>
 
   <div>
-    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/blob/main/LICENSE">
+    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/yfdyzjt/TerrariaWiringComputer" alt="license" />
     </a>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/issues">

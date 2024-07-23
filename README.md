@@ -114,6 +114,10 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 *如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
 
+#### 安装电路加速模组 WireShark （可选） 
+
+如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
+
 ## 构建
 
 在项目根目录执行下面的指令即可完成从硬件到软件的构建
@@ -123,7 +127,7 @@ xmake
 ```
 生成的文件会放置在 `./system` 文件夹，并且会将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
 
----
+#### 配置构建软件
 
 使用下面的指令配置需要构建的软件项目
 
@@ -133,7 +137,7 @@ xmake f --soft=[software_name]
 
 *其中 software_name 对应在 `./software` 文件夹内的软件项目，默认值为 test*
 
----
+#### 配置构建硬件
 
 使用下面的指令配置需要构建的硬件项目
 

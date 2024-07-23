@@ -3,20 +3,16 @@
 
   <div>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/yfdyzjt/TerrariaWiringComputer
-    " alt="license" />
+    <img src="https://img.shields.io/github/license/yfdyzjt/TerrariaWiringComputer" alt="license" />
     </a>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/issues">
-    <img src="https://img.shields.io/github/issues/yfdyzjt/TerrariaWiringComputer
-    " alt="issues" />
+    <img src="https://img.shields.io/github/issues/yfdyzjt/TerrariaWiringComputer" alt="issues" />
     </a>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer">
-    <img src="https://img.shields.io/github/stars/yfdyzjt/TerrariaWiringComputer?style=flat
-    " alt="star" />
+    <img src="https://img.shields.io/github/stars/yfdyzjt/TerrariaWiringComputer?style=flat" alt="star" />
     </a>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/pulls">
-    <img src="https://img.shields.io/github/forks/yfdyzjt/TerrariaWiringComputer?style=flat
-    " alt="fork" />
+    <img src="https://img.shields.io/github/forks/yfdyzjt/TerrariaWiringComputer?style=flat" alt="fork" />
     </a>
   </div>
 
@@ -127,6 +123,8 @@ xmake
 ```
 生成的文件会放置在 `./system` 文件夹，并且会将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
 
+---
+
 使用下面的指令配置需要构建的软件项目
 
 ```bash
@@ -134,6 +132,8 @@ xmake f --soft=[software_name]
 ```
 
 *其中 software_name 对应在 `./software` 文件夹内的软件项目，默认值为 test*
+
+---
 
 使用下面的指令配置需要构建的硬件项目
 

@@ -49,23 +49,6 @@ Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https:/
 
 ### Windows
 
-#### Install Terraria Wiring Computer
-
-Install git using winget
-
-```bash
-winget install Git.Git
-```
-
-Install Terraria Wiring Computer using git
-
-```bash
-git clone https://github.com/yfdyzjt/TerrariaWiringComputer
-cd TerrariaWiringComputer
-```
-
-*If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
-
 #### Install tmake
 
 Install curl using winget
@@ -77,6 +60,7 @@ winget install cURL.cURL
 Install tmake using curl
 
 ```bash
+cd TerrariaWiringComputer
 curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe
 ```
 
@@ -120,23 +104,6 @@ If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004
 
 ### Linux
 
-#### Install Terraria Wiring Computer
-
-Install git using apt
-
-```bash
-sudo apt-get install git
-```
-
-Install Terraria Wiring Computer using git
-
-```bash
-git clone https://github.com/yfdyzjt/TerrariaWiringComputer
-cd TerrariaWiringComputer
-```
-
-*If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
-
 #### Install tmake
 
 Install curl using apt
@@ -148,6 +115,7 @@ sudo apt-get install curl
 Install tmake using curl
 
 ```bash
+cd TerrariaWiringComputer
 curl -o tmake -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64
 chmod +x tmake
 ```

@@ -49,23 +49,6 @@ Terraria Wiring Computer 是一个基于 [泰拉瑞亚](https://store.steampower
 
 ### Windows
 
-#### 安装 Terraria Wiring Computer
-
-使用 winget 安装 git
-
-```bash
-winget install Git.Git
-```
-
-使用 git 安装 Terraria Wiring Computer
-
-```bash
-git clone https://github.com/yfdyzjt/TerrariaWiringComputer
-cd TerrariaWiringComputer
-```
-
-*如无法使用上述方式安装 Terraria Wiring Computer ，请下载 [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") 并手动解压*
-
 #### 安装 tmake
 
 使用 winget 安装 curl
@@ -77,6 +60,7 @@ winget install cURL.cURL
 使用 curl 安装 tmake
 
 ```bash
+cd TerrariaWiringComputer
 curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe
 ```
 
@@ -121,23 +105,6 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 ### Linux
 
-#### 安装 Terraria Wiring Computer
-
-使用 apt 安装 git
-
-```bash
-sudo apt-get install git
-```
-
-使用 git 安装 Terraria Wiring Computer
-
-```bash
-git clone https://github.com/yfdyzjt/TerrariaWiringComputer
-cd TerrariaWiringComputer
-```
-
-*如无法使用上述方式安装 Terraria Wiring Computer ，请下载 [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") 并手动解压*
-
 #### 安装 tmake
 
 使用 apt 安装 curl
@@ -149,6 +116,7 @@ sudo apt-get install curl
 使用 curl 安装 tmake
 
 ```bash
+cd TerrariaWiringComputer
 curl -o tmake -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64
 chmod +x tmake
 ```

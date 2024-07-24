@@ -118,6 +118,10 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
 
+## Linux
+
+请参考以上 Windows 流程安装 tmake、xmake、riscv工具链
+
 # 构建
 
 在项目根目录执行下面的指令即可完成从硬件到软件的构建
@@ -149,7 +153,7 @@ xmake f --hard=[hardware_name]
 
 # 支持
 
-参与到本项目的制作和完善就是对本项目最大的支持
+本项目还有很多未完成和不完善的部分，参与到本项目的制作和完善就是对本项目最大的支持
 
 ## 硬件
 
@@ -243,4 +247,6 @@ xmake f --hard=[hardware_name]
 
 ## 软件
 
-软件源码放置在 `./software/[software_name]` 文件夹，使用根目录的 `./xmake.lua` 作为构建脚本，语法请查看 [xmake 文档](https://xmake.io/#/zh-cn/getting_started "xmake 文档")
+软件源码放置在 `./software/[software_name]` 文件夹，使用 C 语言编写。其中 `src` 文件夹放置源文件， `include` 文件夹放置头文件。
+
+软件使用根目录的 `./xmake.lua` 作为构建脚本，语法请查看 [xmake 文档](https://xmake.io/#/zh-cn/getting_started "xmake 文档") 。更换编程语言需修改编译目标。

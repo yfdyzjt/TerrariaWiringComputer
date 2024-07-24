@@ -33,7 +33,7 @@
   <i>Modular Computer Systems: Simple, Flexible, Open High Performance and High Density Circuits</i><br/>
 </div>
 
-# Introduction ([中文](/README_zh.md))
+## Introduction ([中文](/README_zh.md))
 
 Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https://store.steampowered.com/app/105600 "Terraria") vanilla wiring.
 
@@ -45,11 +45,11 @@ Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https:/
 
 - Optimized for circuit area and performance, aiming to explore the limits of Terraria wiring.
 
-# Installation
+## Installation
 
-## Windows
+### Windows
 
-### Install Terraria Wiring Computer
+#### Install Terraria Wiring Computer
 
 Install git using winget
 
@@ -66,7 +66,7 @@ cd TerrariaWiringComputer
 
 *If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
 
-### Install tmake
+#### Install tmake
 
 Install curl using winget
 
@@ -82,7 +82,7 @@ curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/t
 
 *If you cannot install tmake using the above method, please download [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") and rename it to tmake.exe manually.*
 
-### Install xmake
+#### Install xmake
 
 Install xmake using winget
 
@@ -91,7 +91,7 @@ winget install xmake
 ```
 *If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
 
-### Install riscv toolchain
+#### Install riscv toolchain
 
 Install npm using winget
 
@@ -114,13 +114,13 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 *If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
 
-### Install WireShark circuit acceleration module (optional)
+#### Install WireShark circuit acceleration module (optional)
 
 If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
 
-## Linux
+### Linux
 
-### Install Terraria Wiring Computer
+#### Install Terraria Wiring Computer
 
 Install git using apt
 
@@ -137,7 +137,7 @@ cd TerrariaWiringComputer
 
 *If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
 
-### Install tmake
+#### Install tmake
 
 Install curl using apt
 
@@ -154,7 +154,7 @@ chmod +x tmake
 
 *If you cannot install tmake using the above method, please download [tmake-linux-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64.exe "tmake-linux-x64.exe") and rename it to tmake.exe manually.*
 
-### Install xmake
+#### Install xmake
 
 Install xmake using apt
 
@@ -164,7 +164,7 @@ sudo apt-get install xmake
 
 *If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
 
-### Install riscv toolchain
+#### Install riscv toolchain
 
 Install npm using apt
 
@@ -187,11 +187,11 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 *If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
 
-### Install WireShark circuit acceleration module (optional)
+#### Install WireShark circuit acceleration module (optional)
 
 If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
 
-# Build
+## Build
 
 Execute the following command in the project root directory to complete the build from hardware to software
 
@@ -201,7 +201,7 @@ xmake
 
 The generated files will be placed in the `./system` folder, and the generated map files will be copied to the Terraria and tModLoader map save folders.
 
-### Configure software build
+#### Configure software build
 
 Use the following command to configure the software project to be built
 
@@ -211,7 +211,7 @@ xmake f --soft=[software_name]
 
 *Where software_name corresponds to the software project in the `./software` folder, the default value is test.*
 
-### Configure hardware build
+#### Configure hardware build
 
 Use the following command to configure the hardware project to be built
 
@@ -221,13 +221,13 @@ xmake f --hard=[hardware_name]
 
 *Where hardware_name corresponds to the hardware project in the `./hardware/module` folder, the default value is mini.*
 
-# Support
+## Support
 
 There are still many unfinished and imperfect parts in this project. Participating in the creation and improvement of this project is the greatest support you can provide.
 
-## Hardware
+### Hardware
 
-### Build Scripts
+#### Build Scripts
 
 Hardware build scripts refer to `./hardware/module/[hardware_name].lua`. These scripts include the following three properties:
 
@@ -261,9 +261,9 @@ There are six types of components:
 
 *Hardware build scripts can execute Lua code to assign values to properties.*
 
-### Components
+#### Components
 
-#### Circuits
+##### Circuits
 
 Components should be rectangular and surrounded by a ring of four-color wires. They should not include junction boxes. These four-color wires are used for communication between components, and all data between components is transmitted through these wires. The functions of the four-color wires are defined as follows:
 
@@ -291,13 +291,13 @@ The format of memory addresses transmitted by the blue wire is as follows:
 
 *Addresses start from the high 12 bits, and typically, a status serial sequence is used to compare and determine whether the high 12 bits match the component address.*
 
-#### Addresses
+##### Addresses
 
 Components use Memory-Mapped I/O (MMIO), which assigns an address to each component. When the CPU reads or writes to a specific address, it accesses the corresponding component. The starting address of a component is determined by `Origin`, and the address range is determined by `Length`. Therefore, the accessible addresses for each component range from `Origin` to `Origin + Length`.
 
 The high 12 bits of the address are used to distinguish different components. Each component can use up to the low 20 bits of the address (i.e., the maximum addressable range for each component is 1MB). Address `0x0000_0000` is allocated for instruction memory, and address `0xFFFF_FFFF` is allocated for drivers, with all drivers using the same address.
 
-#### Files
+##### Files
 
 Components are placed in the `/hardware/wiring` folder, categorized by component type. Each component is described by two files: a schematic `[Name].TEditSch` and a script `[Name].lua`.
 
@@ -315,7 +315,7 @@ The script file includes the following three members:
 
 *Usually, only memory-type components need to read/write data, and components of the same size can use the same read/write functions to simplify the code.*
 
-## Software
+### Software
 
 Software source code is located in the `./software/[software_name]` folder and is written in C. The `src` folder contains source files, and the `include` folder contains header files.
 

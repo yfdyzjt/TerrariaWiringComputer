@@ -33,7 +33,7 @@
   <i>模块化计算机系统：简单、灵活、开放的高性能与高密度电路</i><br/>
 </div>
 
-# 简介
+## 简介
 
 Terraria Wiring Computer 是一个基于 [泰拉瑞亚](https://store.steampowered.com/app/105600 "Terraria") 原版电路的 RISC-V 32 位计算机。
 
@@ -45,11 +45,11 @@ Terraria Wiring Computer 是一个基于 [泰拉瑞亚](https://store.steampower
 
 - 针对电路的面积和性能进行大量优化，致力于探索泰拉瑞亚电路的极限。
 
-# 安装
+## 安装
 
-## Windows
+### Windows
 
-### 安装 Terraria Wiring Computer
+#### 安装 Terraria Wiring Computer
 
 使用 winget 安装 git
 
@@ -66,7 +66,7 @@ cd TerrariaWiringComputer
 
 *如无法使用上述方式安装 Terraria Wiring Computer ，请下载 [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") 并手动解压*
 
-### 安装 tmake
+#### 安装 tmake
 
 使用 winget 安装 curl
 
@@ -82,7 +82,7 @@ curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/t
 
 *如无法使用上述方式安装 tmake ，请下载 [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") 并手动重命名为 tmake.exe*
 
-### 安装 xmake
+#### 安装 xmake
 
 使用 winget 安装 xmake
 
@@ -92,7 +92,7 @@ winget install xmake
 
 *如无法使用上述方式安装 winget ，请查看 [其它 xmake 安装方法](https://xmake.io/#/zh-cn/guide/installation "xmake install")*
 
-### 安装 riscv 工具链
+#### 安装 riscv 工具链
 
 使用 winget 安装 npm
 
@@ -115,13 +115,13 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 *如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
 
-### 安装电路加速模组 WireShark （可选） 
+#### 安装电路加速模组 WireShark （可选） 
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
 
-## Linux
+### Linux
 
-### 安装 Terraria Wiring Computer
+#### 安装 Terraria Wiring Computer
 
 使用 apt 安装 git
 
@@ -138,7 +138,7 @@ cd TerrariaWiringComputer
 
 *如无法使用上述方式安装 Terraria Wiring Computer ，请下载 [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") 并手动解压*
 
-### 安装 tmake
+#### 安装 tmake
 
 使用 apt 安装 curl
 
@@ -155,7 +155,7 @@ chmod +x tmake
 
 *如无法使用上述方式安装 tmake ，请下载 [tmake-linux-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64.exe "tmake-linux-x64.exe") 并手动重命名为 tmake.exe*
 
-### 安装 xmake
+#### 安装 xmake
 
 使用 apt 安装 xmake
 
@@ -165,7 +165,7 @@ sudo apt-get install xmake
 
 *如无法使用上述方式安装 winget ，请查看 [其它 xmake 安装方法](https://xmake.io/#/zh-cn/guide/installation "xmake install")*
 
-### 安装 riscv 工具链
+#### 安装 riscv 工具链
 
 使用 apt 安装 npm
 
@@ -188,11 +188,11 @@ xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 
 *如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
 
-### 安装电路加速模组 WireShark （可选） 
+#### 安装电路加速模组 WireShark （可选） 
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
 
-# 构建
+## 构建
 
 在项目根目录执行下面的指令即可完成从硬件到软件的构建
 
@@ -202,7 +202,7 @@ xmake
 
 生成的文件会放置在 `./system` 文件夹，并且会将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
 
-### 配置构建软件
+#### 配置构建软件
 
 使用下面的指令配置需要构建的软件项目
 
@@ -212,7 +212,7 @@ xmake f --soft=[software_name]
 
 *其中 software_name 对应在 `./software` 文件夹内的软件项目，默认值为 test*
 
-### 配置构建硬件
+#### 配置构建硬件
 
 使用下面的指令配置需要构建的硬件项目
 
@@ -222,13 +222,13 @@ xmake f --hard=[hardware_name]
 
 *其中 hardware_name 对应在 `./hardware/module` 文件夹内的硬件项目，默认值为 mini*
 
-# 支持
+## 支持
 
 本项目还有很多未完成和不完善的部分，参与到本项目的制作和完善就是对本项目最大的支持
 
-## 硬件
+### 硬件
 
-### 构建脚本
+#### 构建脚本
 
 硬件构建脚本指的是 `./hardware/module/[hardware_name].lua` ，该脚本包括以下三个属性：
 
@@ -262,9 +262,9 @@ xmake f --hard=[hardware_name]
 
 *硬件构建脚本可执行 lua 代码对属性赋值*
 
-### 部件
+#### 部件
 
-#### 电路
+##### 电路
 
 部件应是矩形的，外侧需围绕一圈四色电线，且其上不能包括分线盒。该四色电线用于部件间通信，部件间的所有数据通过这四色电线传输。以下是四色电线的功能定义：
 
@@ -292,13 +292,13 @@ xmake f --hard=[hardware_name]
 
 *地址以高12位起始，一般使用状态串行序列比较判断地址高12位是否与部件地址相同*
 
-#### 地址
+##### 地址
 
 部件使用 MMIO（内存映射技术），既给每个部件分配一个地址， CPU 对特定地址的读写既访问对应部件。部件的起始地址由 Origin 确定，地址范围由 Length 确定，故每个部件的可访问地址从 Origin 到 Origin + Length。
 
 规定地址的高12位用于区分不同部件，每个部件最多使用地址的低20位（既每个部件的最大寻址范围为 1MB）。地址 0x0000_0000 分配给指令内存，地址 0xFFFF_FFFF 分配给驱动，全部驱动使用相同的地址。
 
-#### 文件
+##### 文件
 
 部件放置在 `/hardware/wiring` 文件夹，按照部件类型分类。每个部件由简图 `[Name].TEditSch` 和脚本 `[Name].lua` 两个文件描述。
 
@@ -316,7 +316,7 @@ xmake f --hard=[hardware_name]
 
 *通常只有 memory 类型的部件需要读写数据，仅大小不同的部件可使用相同的读写函数简化代码*
 
-## 软件
+### 软件
 
 软件源码放置在 `./software/[software_name]` 文件夹，使用 C 语言编写。其中 `src` 文件夹放置源文件， `include` 文件夹放置头文件。
 

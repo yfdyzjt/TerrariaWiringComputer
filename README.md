@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>泰拉瑞亚电路计算机</h1>
+  <h1>Terraria Wiring Computer</h1>
 
   <div>
     <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/blob/master/LICENSE">
@@ -29,224 +29,294 @@
   </div>
   
   <br/>
-  <b>在原版泰拉瑞亚中使用电路制作的 RISC-V 32 位计算机</b><br/>
-  <i>模块化计算机系统：简单、灵活、开放的高性能与高密度电路</i><br/>
+  <b>RISC-V 32-bit computer made by wiring in vanilla Terraria</b><br/>
+  <i>Modular Computer Systems: Simple, Flexible, Open High Performance and High Density Circuits</i><br/>
 </div>
 
-# 简介
+# Introduction ([中文](/README_zh.md))
 
-Terraria Wiring Computer 是一个基于 [泰拉瑞亚](https://store.steampowered.com/app/105600 "Terraria") 原版电路的 RISC-V 32 位计算机。
+Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https://store.steampowered.com/app/105600 "Terraria") vanilla wiring.
 
-- 实现标准的 rv32imc 指令集，可以使用标准的 RISC-V 工具链；
+- Implements the standard rv32imc instruction set and can use the standard RISC-V toolchain;
 
-- 完全模块化的硬件，可自由的选择合适的硬件，开发简单，使用灵活；
+- Fully modular hardware, allowing free choice of suitable hardware, easy development, and flexible use;
 
-- 使用 [tmake](https://github.com/yfdyzjt/TMake "tmake") + [xmake](https://github.com/xmake-io/xmake "xmake") 脚本构建硬件与软件，功能强大、构建便捷；
+- Uses [tmake](https://github.com/yfdyzjt/TMake "tmake") + [xmake](https://github.com/xmake-io/xmake "xmake") scripts to build hardware and software, powerful and convenient;
 
-- 针对电路的面积和性能进行大量优化，致力于探索泰拉瑞亚电路的极限。
+- Optimized for circuit area and performance, aiming to explore the limits of Terraria wiring.
 
-# 安装
+# Installation
 
 ## Windows
 
-### 安装 Terraria Wiring Computer
+### Install Terraria Wiring Computer
 
-使用 winget 安装 git
+Install git using winget
 
 ```bash
 winget install Git.Git
 ```
 
-使用 git 安装 Terraria Wiring Computer
+Install Terraria Wiring Computer using git
 
 ```bash
 git clone https://github.com/yfdyzjt/TerrariaWiringComputer
 cd TerrariaWiringComputer
 ```
 
-*如无法使用上述方式安装 Terraria Wiring Computer ，请下载 [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") 并手动解压*
+*If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
 
-### 安装 tmake
+### Install tmake
 
-使用 winget 安装 curl
+Install curl using winget
 
 ```bash
 winget install cURL.cURL
 ```
 
-使用 curl 安装 tmake
+Install tmake using curl
 
 ```bash
 curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe
 ```
-*如无法使用上述方式安装 tmake ，请下载 [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") 并手动重命名为 tmake.exe*
 
-### 安装 xmake
+*If you cannot install tmake using the above method, please download [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") and rename it to tmake.exe manually.*
 
-使用 winget 安装 xmake
+### Install xmake
+
+Install xmake using winget
 
 ```bash
 winget install xmake
 ```
+*If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
 
-*如无法使用上述方式安装 winget ，请查看 [其它 xmake 安装方法](https://xmake.io/#/zh-cn/guide/installation "xmake install")*
+### Install riscv toolchain
 
-### 安装 riscv 工具链
-
-使用 winget 安装 npm
+Install npm using winget
 
 ```bash
 winget install OpenJS.NodeJS
 ```
 
-使用 npm 安装 xpm
+Install xpm using npm
 
 ```bash
 npm install --location=global xpm@latest
 ```
 
-使用 xpm 安装 riscv-none-elf-gcc-xpark
+Install riscv-none-elf-gcc-xpark using xpm
 
 ```bash
 xpm init
 xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
 ```
 
-*如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
+*If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
 
-### 安装电路加速模组 WireShark （可选） 
+### Install WireShark circuit acceleration module (optional)
 
-如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
+If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
 
 ## Linux
 
-请参考以上 Windows 流程安装 tmake、xmake、riscv工具链
+### Install Terraria Wiring Computer
 
-# 构建
+Install git using apt
 
-在项目根目录执行下面的指令即可完成从硬件到软件的构建
+```bash
+sudo apt-get install git
+```
+
+Install Terraria Wiring Computer using git
+
+```bash
+git clone https://github.com/yfdyzjt/TerrariaWiringComputer
+cd TerrariaWiringComputer
+```
+
+*If you cannot install Terraria Wiring Computer using the above method, please download [TerrariaWiringComputer-master.zip](https://github.com/yfdyzjt/TerrariaWiringComputer/archive/refs/heads/master.zip "TerrariaWiringComputer-master.zip") and extract it manually.*
+
+### Install tmake
+
+Install curl using apt
+
+```bash
+sudo apt-get install curl
+```
+
+Install tmake using curl
+
+```bash
+curl -o tmake -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64
+chmod +x tmake
+```
+
+*If you cannot install tmake using the above method, please download [tmake-linux-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64.exe "tmake-linux-x64.exe") and rename it to tmake.exe manually.*
+
+### Install xmake
+
+Install xmake using apt
+
+```bash
+sudo apt-get install xmake
+```
+
+*If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
+
+### Install riscv toolchain
+
+Install npm using apt
+
+```bash
+sudo apt-get install npm
+```
+
+Install xpm using npm
+
+```bash
+npm install --location=global xpm@latest
+```
+
+Install riscv-none-elf-gcc-xpark using xpm
+
+```bash
+xpm init
+xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
+```
+
+*If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
+
+### Install WireShark circuit acceleration module (optional)
+
+If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
+
+# Build
+
+Execute the following command in the project root directory to complete the build from hardware to software
 
 ```bash
 xmake
 ```
-生成的文件会放置在 `./system` 文件夹，并且会将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
 
-### 配置构建软件
+The generated files will be placed in the `./system` folder, and the generated map files will be copied to the Terraria and tModLoader map save folders.
 
-使用下面的指令配置需要构建的软件项目
+### Configure software build
+
+Use the following command to configure the software project to be built
 
 ```bash
 xmake f --soft=[software_name]
 ```
 
-*其中 software_name 对应在 `./software` 文件夹内的软件项目，默认值为 test*
+*Where software_name corresponds to the software project in the `./software` folder, the default value is test.*
 
-### 配置构建硬件
+### Configure hardware build
 
-使用下面的指令配置需要构建的硬件项目
+Use the following command to configure the hardware project to be built
 
 ```bash
 xmake f --hard=[hardware_name]
 ```
 
-*其中 hardware_name 对应在 `./hardware/module` 文件夹内的硬件项目，默认值为 mini*
+*Where hardware_name corresponds to the hardware project in the `./hardware/module` folder, the default value is mini.*
 
-# 支持
+# Support
 
-本项目还有很多未完成和不完善的部分，参与到本项目的制作和完善就是对本项目最大的支持
+There are still many unfinished and imperfect parts in this project. Participating in the creation and improvement of this project is the greatest support you can provide.
 
-## 硬件
+## Hardware
 
-### 构建脚本
+### Build Scripts
 
-硬件构建脚本指的是 `./hardware/module/[hardware_name].lua` ，该脚本包括以下三个属性：
+Hardware build scripts refer to `./hardware/module/[hardware_name].lua`. These scripts include the following three properties:
 
-|  名称  |  类型  |  描述  |
-|  :---  |  :---  |  :---  |
-|  World  |  string  |  使用的世界，位于 `/hardware/world/[World].wld`  |
-|  Link  |  string  |  使用的部件链接脚本，位于 `/hardware/link/[Link].lua` |
-|  Parts  |  table  |  使用的部件描述，详见下表 |
+| Name | Type | Description |
+| --- | --- | --- |
+| World | string | The world used, located in `/hardware/world/[World].wld` |
+| Link | string | The component link script used, located in `/hardware/link/[Link].lua` |
+| Parts | table | The component descriptions used, see the table below |
 
-构建脚本会在世界中按照部件链接脚本描述的算法放置部件
+The build script will place components in the world according to the algorithm described in the component link script.
 
-其中 `Parts` 的成员为部件，包括下面四个属性：
+The members of `Parts` represent components and include the following four properties:
 
-|  名称  |  类型  |  描述  |
-|  :---  |  :---  |  :---  |
-|  Name  |  string  |  部件的名称，位于 `/hardware/wiring` 文件夹  |
-|  Type  |  string  |  部件的类型，详见下表 |
-|  Origin  |  int  |  部件的地址，单位字节 |
-|  Length  |  int  |  部件的大小，单位字节 |
+| Name | Type | Description |
+| --- | --- | --- |
+| Name | string | The name of the component, located in the `/hardware/wiring` folder |
+| Type | string | The type of the component, see the table below |
+| Origin | int | The address of the component, in bytes |
+| Length | int | The size of the component, in bytes |
 
-部件的类型有以下六种：
+There are six types of components:
 
-|  名称  |  描述  |
-|  :---  |  :---  |
-|  cpu  |  中央处理器  |
-|  memory_ins  |  指令内存 |
-|  memory_data  |  数据内存 |
-|  input  |  输入，例如键盘 |
-|  ouput  |  输出，例如屏幕 |
-|  driver  |  驱动，提供时钟信号 |
+| Name | Description |
+| --- | --- |
+| cpu | Central Processing Unit |
+| memory_ins | Instruction memory |
+| memory_data | Data memory |
+| input | Input, e.g., keyboard |
+| output | Output, e.g., screen |
+| driver | Driver, provides clock signal |
 
-*硬件构建脚本可执行 lua 代码对属性赋值*
+*Hardware build scripts can execute Lua code to assign values to properties.*
 
-### 部件
+### Components
 
-#### 电路
+#### Circuits
 
-部件应是矩形的，外侧需围绕一圈四色电线，且其上不能包括分线盒。该四色电线用于部件间通信，部件间的所有数据通过这四色电线传输。以下是四色电线的功能定义：
+Components should be rectangular and surrounded by a ring of four-color wires. They should not include junction boxes. These four-color wires are used for communication between components, and all data between components is transmitted through these wires. The functions of the four-color wires are defined as follows:
 
-|  电线颜色  |  功能  |
-|  :---  |  :---  |
-|  红  |  驱动产生的时钟信号  |
-|  蓝  |  数据内存地址 |
-|  绿  |  指令内存地址与数据 |
-|  黄  |  数据内存数据 |
+| Wire Color | Function |
+| --- | --- |
+| Red | Clock signal generated by the driver |
+| Blue | Data memory address |
+| Green | Instruction memory address and data |
+| Yellow | Data memory data |
 
-*蓝、绿、黄线使用状态串行传输数据*
+*Blue, green, and yellow wires use serial transmission for data.*
 
-以下是蓝线传输的内存地址格式：
+The format of memory addresses transmitted by the blue wire is as follows:
 
-|  位  |  描述  |
-|  :---  |  :---  |
-|  0 - 11  |  地址高12位（部件间地址）  |
-|  12  |  标志：半字 |
-|  13  |  标志：字 |
-|  14  |  标志：符号位扩展 |
-|  15  |  标志：写 |
-|  16 - 35  |  地址低20位（部件内地址） |
+| Bit | Description |
+| --- | --- |
+| 0 - 11 | High 12 bits of the address (inter-component address) |
+| 12 | Flag: half-word |
+| 13 | Flag: word |
+| 14 | Flag: sign extension |
+| 15 | Flag: write |
+| 16 - 35 | Low 20 bits of the address (intra-component address) |
 
-*其中标志位为1时使能*
+*The flag bits are enabled when set to 1.*
 
-*地址以高12位起始，一般使用状态串行序列比较判断地址高12位是否与部件地址相同*
+*Addresses start from the high 12 bits, and typically, a status serial sequence is used to compare and determine whether the high 12 bits match the component address.*
 
-#### 地址
+#### Addresses
 
-部件使用 MMIO（内存映射技术），既给每个部件分配一个地址， CPU 对特定地址的读写既访问对应部件。部件的起始地址由 Origin 确定，地址范围由 Length 确定，故每个部件的可访问地址从 Origin 到 Origin + Length。
+Components use Memory-Mapped I/O (MMIO), which assigns an address to each component. When the CPU reads or writes to a specific address, it accesses the corresponding component. The starting address of a component is determined by `Origin`, and the address range is determined by `Length`. Therefore, the accessible addresses for each component range from `Origin` to `Origin + Length`.
 
-规定地址的高12位用于区分不同部件，每个部件最多使用地址的低20位（既每个部件的最大寻址范围为 1MB）。地址 0x0000_0000 分配给指令内存，地址 0xFFFF_FFFF 分配给驱动，全部驱动使用相同的地址。
+The high 12 bits of the address are used to distinguish different components. Each component can use up to the low 20 bits of the address (i.e., the maximum addressable range for each component is 1MB). Address `0x0000_0000` is allocated for instruction memory, and address `0xFFFF_FFFF` is allocated for drivers, with all drivers using the same address.
 
-#### 文件
+#### Files
 
-部件放置在 `/hardware/wiring` 文件夹，按照部件类型分类。每个部件由简图 `[Name].TEditSch` 和脚本 `[Name].lua` 两个文件描述。
+Components are placed in the `/hardware/wiring` folder, categorized by component type. Each component is described by two files: a schematic `[Name].TEditSch` and a script `[Name].lua`.
 
-*.TEditSch 文件是 [泰拉瑞亚地图编辑器 TEdit](https://github.com/TEdit/Terraria-Map-Editor "泰拉瑞亚地图编辑器") 的剪贴板简图文件，可以使用 TEdit 读取或写入*
+*.TEditSch files are clipboard schematic files for Terraria Map Editor (TEdit), which can be read or written using TEdit.*
 
-脚本文件包括以下三个成员：
+The script file includes the following three members:
 
-|  名称  |  描述  |
-|  :---  |  :---  |
-|  AddrPos  |  地址读写位置  |
-|  Write  |  向部件写入数据的函数 |
-|  Read  |  从部件读取数据的函数（暂未实现） |
+| Name | Description |
+| --- | --- |
+| AddrPos | Address read/write position |
+| Write | Function to write data to the component |
+| Read | Function to read data from the component (not yet implemented) |
 
-*AddrPos 为状态串行序列比较的序列逻辑灯位置，用于读写部件地址*
+*`AddrPos` is the position of the sequence logic lamp used for address read/write.*
 
-*通常只有 memory 类型的部件需要读写数据，仅大小不同的部件可使用相同的读写函数简化代码*
+*Usually, only memory-type components need to read/write data, and components of the same size can use the same read/write functions to simplify the code.*
 
-## 软件
+## Software
 
-软件源码放置在 `./software/[software_name]` 文件夹，使用 C 语言编写。其中 `src` 文件夹放置源文件， `include` 文件夹放置头文件。
+Software source code is located in the `./software/[software_name]` folder and is written in C. The `src` folder contains source files, and the `include` folder contains header files.
 
-软件使用根目录的 `./xmake.lua` 作为构建脚本，语法请查看 [xmake 文档](https://xmake.io/#/zh-cn/getting_started "xmake 文档") 。更换编程语言需修改编译目标。
+The software uses the root `./xmake.lua` as

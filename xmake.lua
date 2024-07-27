@@ -57,8 +57,9 @@ target("system")
     
         after_build(
             function (target)
-                os.exec("riscv-none-elf-objcopy -O binary ./system/" .. software .. ".elf ./system/" .. software .. ".bin")
-                os.exec("riscv-none-elf-size -Ax ./system/" .. software .. ".elf")
+                local sdkdir = "xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content/bin/"
+                os.exec(sdkdir .. "riscv-none-elf-objcopy -O binary ./system/" .. software .. ".elf ./system/" .. software .. ".bin")
+                os.exec(sdkdir .. "riscv-none-elf-size -Ax ./system/" .. software .. ".elf")
                 os.exec("tmake do \"Include(self,\\\"tmake.lua\\\").MakeWorld(\\\"" .. software .. "\\\",\\\"" .. hardware .. "\\\")\"")
             end
         )

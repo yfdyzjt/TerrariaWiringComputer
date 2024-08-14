@@ -47,128 +47,49 @@ Terraria Wiring Computer 是一个基于 [泰拉瑞亚](https://store.steampower
 
 ## 安装
 
-### Windows
-
-#### 安装 tmake
-
-使用 winget 安装 curl
+### 导航到项目文件夹
 
 ```bash
-winget install cURL.cURL
+cd /TerrariaWiringComputer
 ```
 
-使用 curl 安装 tmake
+*需替换为实际的目录*
+
+### 拉取 docker 镜像
 
 ```bash
-cd TerrariaWiringComputer
-curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe
+docker pull yfdyzjt/terraria-wiring-computer
 ```
 
-*如无法使用上述方式安装 tmake ，请下载 [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") 并手动重命名为 tmake.exe*
-
-#### 安装 xmake
-
-使用 winget 安装 xmake
+### 运行 docker 容器
 
 ```bash
-winget install xmake
+# Linux
+docker run -it --rm -v ${PWD}:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
+
+# Windows
+docker run -it --rm -v %CD%:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
 ```
 
-*如无法使用上述方式安装 winget ，请查看 [其它 xmake 安装方法](https://xmake.io/#/zh-cn/guide/installation "xmake install")*
-
-#### 安装 riscv 工具链
-
-使用 winget 安装 npm
-
-```bash
-winget install OpenJS.NodeJS
-```
-
-使用 npm 安装 xpm
-
-```bash
-npm install --location=global xpm@latest
-```
-
-使用 xpm 安装 riscv-none-elf-gcc-xpark
-
-```bash
-xpm init
-xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
-```
-
-*如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
-
-#### 安装电路加速模组 WireShark （可选） 
-
-如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
-
-### Linux
-
-#### 安装 tmake
-
-使用 apt 安装 curl
-
-```bash
-sudo apt-get install curl
-```
-
-使用 curl 安装 tmake
-
-```bash
-cd TerrariaWiringComputer
-curl -o tmake -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64
-chmod +x tmake
-```
-
-*如无法使用上述方式安装 tmake ，请下载 [tmake-linux-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64.exe "tmake-linux-x64.exe") 并手动重命名为 tmake.exe*
-
-#### 安装 xmake
-
-使用 apt 安装 xmake
-
-```bash
-sudo apt-get install xmake
-```
-
-*如无法使用上述方式安装 winget ，请查看 [其它 xmake 安装方法](https://xmake.io/#/zh-cn/guide/installation "xmake install")*
-
-#### 安装 riscv 工具链
-
-使用 apt 安装 npm
-
-```bash
-sudo apt-get install npm
-```
-
-使用 npm 安装 xpm
-
-```bash
-npm install --location=global xpm@latest
-```
-
-使用 xpm 安装 riscv-none-elf-gcc-xpark
-
-```bash
-xpm init
-xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
-```
-
-*如无法使用上述方式安装 riscv 工具链，请查看 [其它 riscv-none-elf-gcc-xpark 安装方法](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install")*
-
-#### 安装电路加速模组 WireShark （可选） 
+### 安装电路加速模组 WireShark （可选） 
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
 
 ## 构建
 
-在项目根目录执行下面的指令即可完成从硬件到软件的构建
+在 docker 容器中执行下面的指令可完成从硬件到软件的构建
 
 ```bash
 xmake
 ```
 
-生成的文件会放置在 `./system` 文件夹，并且会将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
+*生成的文件会放置在 `./system` 文件夹*
+
+使用下面的指令将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
+
+```bash
+copy_world
+```
 
 #### 配置构建软件
 

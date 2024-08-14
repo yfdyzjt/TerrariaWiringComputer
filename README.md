@@ -47,147 +47,69 @@ Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https:/
 
 ## Installation
 
-### Windows
-
-#### Install tmake
-
-Install curl using winget
+### Navigate to the Project Folder
 
 ```bash
-winget install cURL.cURL
+cd /TerrariaWiringComputer
 ```
 
-Install tmake using curl
+*Replace with the actual directory*
+
+### Pull the Docker Image
 
 ```bash
-cd TerrariaWiringComputer
-curl -o tmake.exe -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe
+docker pull yfdyzjt/terraria-wiring-computer
 ```
 
-*If you cannot install tmake using the above method, please download [tmake-win-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-win-x64.exe "tmake-win-x64.exe") and rename it to tmake.exe manually.*
-
-#### Install xmake
-
-Install xmake using winget
+### Run the Docker Container
 
 ```bash
-winget install xmake
-```
-*If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
+# Linux
+docker run -it --rm -v ${PWD}:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
 
-#### Install riscv toolchain
-
-Install npm using winget
-
-```bash
-winget install OpenJS.NodeJS
+# Windows
+docker run -it --rm -v %CD%:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
 ```
 
-Install xpm using npm
+#### Install WireShark circuit acceleration mod (optional)
 
-```bash
-npm install --location=global xpm@latest
-```
-
-Install riscv-none-elf-gcc-xpark using xpm
-
-```bash
-xpm init
-xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
-```
-
-*If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
-
-#### Install WireShark circuit acceleration module (optional)
-
-If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
-
-### Linux
-
-#### Install tmake
-
-Install curl using apt
-
-```bash
-sudo apt-get install curl
-```
-
-Install tmake using curl
-
-```bash
-cd TerrariaWiringComputer
-curl -o tmake -L https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64
-chmod +x tmake
-```
-
-*If you cannot install tmake using the above method, please download [tmake-linux-x64.exe](https://github.com/yfdyzjt/TMake/releases/latest/download/tmake-linux-x64.exe "tmake-linux-x64.exe") and rename it to tmake.exe manually.*
-
-#### Install xmake
-
-Install xmake using apt
-
-```bash
-sudo apt-get install xmake
-```
-
-*If you cannot install winget, please refer to [other xmake installation methods](https://xmake.io/#/zh-cn/guide/installation "xmake install") .*
-
-#### Install riscv toolchain
-
-Install npm using apt
-
-```bash
-sudo apt-get install npm
-```
-
-Install xpm using npm
-
-```bash
-npm install --location=global xpm@latest
-```
-
-Install riscv-none-elf-gcc-xpark using xpm
-
-```bash
-xpm init
-xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
-```
-
-*If you cannot install the riscv toolchain using the above method, please refer to [other riscv-none-elf-gcc-xpark installation methods](https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack "riscv-none-elf-gcc-xpark install").*
-
-#### Install WireShark circuit acceleration module (optional)
-
-If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration module, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
+If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration mod, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
 
 ## Build
 
-Execute the following command in the project root directory to complete the build from hardware to software
+Execute the following command in the Docker container to complete the build from hardware to software:
 
 ```bash
 xmake
 ```
 
-The generated files will be placed in the `./system` folder, and the generated map files will be copied to the Terraria and tModLoader map save folders.
+*The generated files will be placed in the `./system` folder*
 
-#### Configure software build
+Use the following command to copy the generated world files to the Terraria and tModLoader world save folders:
 
-Use the following command to configure the software project to be built
+```bash
+copy_world
+```
+
+#### Configure Software Build
+
+Use the following command to configure the software project you want to build:
 
 ```bash
 xmake f --soft=[software_name]
 ```
 
-*Where software_name corresponds to the software project in the `./software` folder, the default value is test.*
+*Where software_name corresponds to a software project in the `./software folder`, with a default value of test.*
 
-#### Configure hardware build
+#### Configure Hardware Build
 
-Use the following command to configure the hardware project to be built
+Use the following command to configure the hardware project you want to build:
 
 ```bash
 xmake f --hard=[hardware_name]
 ```
 
-*Where hardware_name corresponds to the hardware project in the `./hardware/module` folder, the default value is mini.*
+*Where hardware_name corresponds to a hardware project in the `./hardware/module folder`, with a default value of mini.*
 
 ## Support
 

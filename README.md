@@ -83,7 +83,7 @@ Execute the following command in the Docker container to complete the build from
 xmake
 ```
 
-*The generated files will be placed in the ./system folder.*
+*The generated files will be placed in the `./system` folder.*
 
 Execute the following command in the project directory to copy the generated world files to the Terraria and tModLoader world save folders:
 
@@ -99,7 +99,7 @@ Execute the following command in the Docker container to configure the software 
 xmake f --soft=[software_name]
 ```
 
-*Where software_name corresponds to a software project in the ./software folder, with a default value of test.*
+*Where software_name corresponds to a software project in the `./software` folder, with a default value of test.*
 
 #### Configure Hardware Build
 
@@ -109,4 +109,4 @@ Execute the following command in the Docker container to configure the hardware 
 xmake f --hard=[hardware_name]
 ```
 
-*Where hardware_name corresponds to a hardware project in the ./hardware/module folder, with a default value of mini.*
+*Where hardware_name corresponds to a hardware project in the `./hardware/module` folder, with a default value of mini.*

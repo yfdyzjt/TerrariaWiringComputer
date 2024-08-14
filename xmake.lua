@@ -5,7 +5,7 @@ add_rules("mode.debug", "mode.release")
 
 toolchain("riscv-none-elf")
     set_kind("standalone")
-    set_sdkdir("./xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content")
+    set_sdkdir("../xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content")
 toolchain_end()
 
 set_toolchains("riscv-none-elf")
@@ -57,7 +57,7 @@ target("system")
     
         after_build(
             function (target)
-                local sdkdir = "xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content/bin/"
+                local sdkdir = "../xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content/bin/"
                 os.exec(sdkdir .. "riscv-none-elf-objcopy -O binary ./system/" .. software .. ".elf ./system/" .. software .. ".bin")
                 os.exec(sdkdir .. "riscv-none-elf-size -Ax ./system/" .. software .. ".elf")
                 os.exec("tmake do \"Include(self,\\\"tmake.lua\\\").MakeWorld(\\\"" .. software .. "\\\",\\\"" .. hardware .. "\\\")\"")

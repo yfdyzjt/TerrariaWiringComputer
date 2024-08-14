@@ -1,0 +1,14 @@
+# xmake
+.xmake/
+build/
+
+# tmake
+tmake*
+!tmake.lua
+
+# xpacks
+xpacks/
+package.json
+
+# output
+system/

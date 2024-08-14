@@ -90,24 +90,6 @@ local function MakeSch(part, bin)
     return env.Write(sch, bin)
 end
 
-local function CopyWorld(world, world_filename)
-    if RuntimeInformation.IsOSPlatform(OSPlatform.Windows) then
-        terraria_folder = os.getenv("USERPROFILE") .. "\\Documents\\My Games\\Terraria\\Worlds\\"
-        tmodloader_folder = os.getenv("USERPROFILE") .. "\\Documents\\My Games\\Terraria\\tModLoader\\Worlds\\"
-    elseif RuntimeInformation.IsOSPlatform(OSPlatform.Linux) then
-        terraria_folder = os.getenv("XDG_DATA_HOME") .. "/Terraria/Worlds/"
-        tmodloader_folder = os.getenv("XDG_DATA_HOME") .. "/Terraria/tModLoader/Worlds/"
-    end
-    if Directory.Exists(terraria_folder) then
-        print("Copy world to " .. terraria_folder .. world_filename)
-        File.Copy("./system/" .. world_filename, terraria_folder .. world_filename, true)
-    end
-    if Directory.Exists(tmodloader_folder) then
-        print("Copy world to " .. tmodloader_folder .. world_filename)
-        File.Copy("./system/" .. world_filename, tmodloader_folder .. world_filename, true)
-    end
-end
-
 function MakeWorld(softwarename, hardwarename)
     local mode = Include(self, "./hardware/module/" .. hardwarename .. ".lua")
 
@@ -132,5 +114,4 @@ function MakeWorld(softwarename, hardwarename)
     world.Name = world.Name .. "_" .. hardwarename .. "_" .. softwarename
     
     SaveWorld(world, "./system/" .. world.Name .. ".wld")
-    CopyWorld(world, world.Name .. ".wld")
 end

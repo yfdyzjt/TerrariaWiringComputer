@@ -85,7 +85,7 @@ xmake
 
 *生成的文件会放置在 `./system` 文件夹*
 
-使用下面的指令将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
+在项目目录中执行下面的指令将生成的地图文件复制到 Terraria 和 tModLoader 地图存档文件夹
 
 ```bash
 copy_world
@@ -93,7 +93,7 @@ copy_world
 
 #### 配置构建软件
 
-使用下面的指令配置需要构建的软件项目
+在 docker 容器中执行下面的指令配置需要构建的软件项目
 
 ```bash
 xmake f --soft=[software_name]
@@ -103,7 +103,7 @@ xmake f --soft=[software_name]
 
 #### 配置构建硬件
 
-使用下面的指令配置需要构建的硬件项目
+在 docker 容器中执行下面的指令配置需要构建的硬件项目
 
 ```bash
 xmake f --hard=[hardware_name]

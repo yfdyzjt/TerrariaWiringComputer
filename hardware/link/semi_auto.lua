@@ -9,10 +9,10 @@ local function SortAndPaste(world, parts, x, y)
     for _, part in ipairs(parts) do
         local pos = Point(x, y)
         if part.Type == "output" then
-            world.SpawnTileX = x + 5
-            world.SpawnTileY = y + part.Sch.MaxTilesY + 7
+            world.SpawnTileX = x - 4
+            world.SpawnTileY = y + part.Sch.MaxTilesY - 60
         elseif part.Type == "input" then
-            pos = Point(world.SpawnTileX - 5, world.SpawnTileY - 7)
+            pos = Point(world.SpawnTileX - 4, world.SpawnTileY - 6)
         end
         Tool.Paste(world, pos, part.Sch)
 

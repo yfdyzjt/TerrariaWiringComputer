@@ -1,5 +1,1 @@
-AddrPos = nil
-
-function Write(sch, bin)
-    return sch
-end
+SpawnPos = {4, 6}

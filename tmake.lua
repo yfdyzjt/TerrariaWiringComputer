@@ -74,20 +74,27 @@ function MakeLinkScript(hardwarename)
 end
 
 local function MakeSch(part, bin)
-    local env = Include(self, "./hardware/wiring/**/" .. part.Name .. ".lua")
     local sch = LoadSchematic("./hardware/wiring/**/" .. part.Name .. ".sch")
+    local env = {}
+    if Directory.GetFiles("./hardware/wiring/", part.Name .. ".lua", SearchOption.AllDirectories).Length ~= 0 then
+        env = Include(self, "./hardware/wiring/**/" .. part.Name .. ".lua")
+    end
 
     if env.AddrPos then
         for bit, pos in ipairs(env.AddrPos) do
             Tool.SetLogicLamp(sch.Tile[pos[1], pos[2]], Tool.IsZero(part.Origin, bit + 19))
         end
     end
-
+    
     if part.Type ~= "cpu" and part.Type ~= "driver" then
         bin.BaseStream.Position = part.Origin
     end
-
-    return env.Write(sch, bin)
+    
+    if env.Write then
+        return env, env.Write(sch, bin)
+    else
+        return env, sch
+    end
 end
 
 function MakeWorld(softwarename, hardwarename)
@@ -101,7 +108,7 @@ function MakeWorld(softwarename, hardwarename)
 
     for _, part in ipairs(mode.Parts) do
         print("Start make part: " .. part.Name)
-        part.Sch = MakeSch(part, br)
+        part.Env, part.Sch = MakeSch(part, br)
     end
 
     br.Close()

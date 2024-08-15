@@ -1,5 +1,3 @@
-AddrPos = nil
-
 local MaxLine : int = 64
 local MaxRow : int = 8
 

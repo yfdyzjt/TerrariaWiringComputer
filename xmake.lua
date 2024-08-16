@@ -33,9 +33,11 @@ target("system")
 
         add_files("hardware/entry/start.s")
         add_files("hardware/entry/reset.c")
+        add_includedirs("hardware/include")
+        add_includedirs("software/include")
 
-        add_files("software/" .. software .. "/src/**.c")
-        add_includedirs("software/" .. software .. "/include")
+        add_files("software/src/" .. software .. "/**.c")
+        add_includedirs("software/src/" .. software)
 
         add_ldflags("-Wl,-T,./system/" .. hardware .. "_link.ld")
 

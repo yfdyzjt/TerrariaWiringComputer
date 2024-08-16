@@ -99,7 +99,7 @@ copy_world
 xmake f --soft=[software_name]
 ```
 
-*其中 software_name 对应在 `./software` 文件夹内的软件项目，默认值为 test*
+*其中 software_name 对应在 `./software/src` 文件夹内的软件项目，默认值为 test*
 
 #### 配置构建硬件
 

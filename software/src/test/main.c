@@ -1,14 +1,6 @@
-#define SCREEN ((volatile unsigned char *)_display_96_64_origin)
-#define SCREEN_CTRL ((volatile unsigned char *)(_display_96_64_origin + _display_96_64_length - 1))
-#define DIVER ((volatile unsigned char *)0xFFFFFFFF)
+#include "display_96_64.h"
 
-#define SCREEN_CLC ((unsigned char)0)
-#define SCREEN_REF ((unsigned char)1)
-
-#define SCREEN_SIZE_X 96
-#define SCREEN_SIZE_Y 64
-
-#include "ASCII_5_7.h"
+#include "ascii_5_7.h"
 
 void drawByteGrid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
 {
@@ -67,6 +59,4 @@ int main()
 {
 	drawString("Hello World!\n");
 	*SCREEN_CTRL = SCREEN_REF;
-
-	*DIVER = 0;
 }

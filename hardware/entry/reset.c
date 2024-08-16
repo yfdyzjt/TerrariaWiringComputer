@@ -3,4 +3,5 @@ void reset()
 {
     extern int main();
     main();
+    *(volatile unsigned char *)0xFFFFFFFF = 0;
 }

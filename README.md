@@ -99,7 +99,7 @@ Execute the following command in the Docker container to configure the software 
 xmake f --soft=[software_name]
 ```
 
-*Where software_name corresponds to a software project in the `./software` folder, with a default value of test.*
+*Where software_name corresponds to a software project in the `./software/src` folder, with a default value of test.*
 
 #### Configure Hardware Build
 

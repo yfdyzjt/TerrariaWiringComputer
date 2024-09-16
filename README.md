@@ -64,11 +64,7 @@ docker pull yfdyzjt/terraria-wiring-computer
 ### Run the Docker Container
 
 ```bash
-# Linux
-docker run -it --rm -v ${PWD}:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
-
-# Windows
-docker run -it --rm -v %CD%:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
+startup
 ```
 
 #### Install WireShark circuit acceleration mod (optional)

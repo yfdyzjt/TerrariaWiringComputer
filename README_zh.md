@@ -64,11 +64,7 @@ docker pull yfdyzjt/terraria-wiring-computer
 ### 运行 docker 容器
 
 ```bash
-# Linux
-docker run -it --rm -v ${PWD}:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
-
-# Windows
-docker run -it --rm -v %CD%:/TerrariaWiringComputer yfdyzjt/terraria-wiring-computer
+startup
 ```
 
 ### 安装电路加速模组 WireShark （可选） 

@@ -1,10 +1,14 @@
 function main(parts)
     local result = ""
+    local have_data_rom = false
 
     result = result .. "MEMORY\n"
     result = result .. "{" .. "\n"
     for _, part in ipairs(parts) do
         result = result .. "\t" .. string.format("%s (%s) : ORIGIN = %d, LENGTH = %d", part.memory, part.rwx, part.origin, part.length) .. "\n"
+        if part.memory == "DATA_ROM" then
+            have_data_rom = true
+        end
     end
     result = result .. "}\n"
     result = result .. "SECTIONS\n"
@@ -26,6 +30,12 @@ function main(parts)
             result = result .. "\t{\n"
             result = result .. "\t\t*(.data .data.*);\n"
             result = result .. "\t} > " .. part.memory .. "\n"
+            if not have_data_rom then
+                result = result .. "\t.rodata :\n"
+                result = result .. "\t{\n"
+                result = result .. "\t\t*(.rodata .rodata.*);\n"
+                result = result .. "\t} > " .. part.memory .. "\n"
+            end
         elseif part.memory == "DATA_ROM" then
             result = result .. "\t.rodata :\n"
             result = result .. "\t{\n"

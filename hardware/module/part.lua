@@ -177,29 +177,36 @@ function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ra
     local parts = {}
     local link_parts = {}
 
+    local origin = 0
+
+    local text_parts = {}
+    local rodata_parts = {}
+    local data_parts = {}
+
     local include_files = _convert_source_files(source_files, include_dirs)
     local io_parts, text_size, rodata_size = _convert_object_files(object_files, include_files, bin_dir)
     local data_size = _parse_size(ram)
+    local have_data_rom = rodata_size >= data_size / 2
 
     -- print(string.format("text size: %d bytes", text_size))
     -- print(string.format("rodata size: %d bytes", rodata_size))
 
-    local origin = 0
-    local text_parts, origin = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", text_size, origin)
-    local rodata_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", rodata_size, origin)
-    local data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", data_size, origin)
+    text_parts, origin = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", text_size, origin)
+    if have_data_rom then rodata_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", rodata_size, origin) end
+    data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", data_size, origin)
     origin = _assign_mem_addr(io_parts, origin)
     
     table.insert(link_parts, _link_parts("INS_ROM", text_parts))
-    table.insert(link_parts, _link_parts("DATA_ROM", rodata_parts))
+    if have_data_rom then table.insert(link_parts, _link_parts("DATA_ROM", rodata_parts)) end
     table.insert(link_parts, _link_parts("DATA_RAM", data_parts))
     _combine_parts(link_parts, io_parts)
 
     table.insert(parts, {name = cpu, file = cpu, type = "cpu"})
     _combine_parts(parts, text_parts)
-    _combine_parts(parts, rodata_parts)
+    if have_data_rom then _combine_parts(parts, rodata_parts) end
     _combine_parts(parts, data_parts)
     _combine_parts(parts, io_parts)
+    table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"})
     table.insert(parts, {name = driver, file = driver, type = "driver"})
 
     return parts, link_parts

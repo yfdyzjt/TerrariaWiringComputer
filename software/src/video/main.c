@@ -8,12 +8,12 @@ int main()
 
 	while (ptr < sizeof(video) / sizeof(unsigned int))
 	{
-		for (y = 0; y < SCREEN_SIZE_Y; y++)
+		for (y = 0; y < DISPLAY_SIZE_Y; y++)
 		{
-			*(unsigned int *)(SCREEN + (y << 4) + 0) = video[ptr++];
-			*(unsigned int *)(SCREEN + (y << 4) + 4) = video[ptr++];
-			*(unsigned int *)(SCREEN + (y << 4) + 8) = video[ptr++];
+			*(unsigned int *)&display_buffer[(y << 4) + 0] = video[ptr++];
+			*(unsigned int *)&display_buffer[(y << 4) + 4] = video[ptr++];
+			*(unsigned int *)&display_buffer[(y << 4) + 8] = video[ptr++];
 		}
-		*SCREEN_CTRL = SCREEN_REF;
+		*display_ctrl = DISPLAY_REF;
 	}
 }

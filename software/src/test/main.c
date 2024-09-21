@@ -4,7 +4,7 @@
 
 void drawByteGrid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
 {
-	unsigned char *addr = (unsigned char *)(SCREEN + posX / 8 + posY * 16);
+	unsigned char *addr = &display_buffer[posX / 8 + posY * 16];
 
 	int i;
 
@@ -17,26 +17,26 @@ void drawByteGrid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
 
 	for (i = 0; i < sizeY; i++)
 	{
-		if (i + posY < 0 && i + posY >= SCREEN_SIZE_Y)
+		if (i + posY < 0 && i + posY >= DISPLAY_SIZE_Y)
 			continue;
 		date = (unsigned short)((grid[i] << low) & mask);
 
-		if (posX >= 0 && posX < SCREEN_SIZE_X)
+		if (posX >= 0 && posX < DISPLAY_SIZE_X)
 			*addr = (*addr & ~*((unsigned char *)&mask)) ^ *((unsigned char *)&date);
-		if (high >= 8 && posX + 8 >= 0 && posX + 8 < SCREEN_SIZE_X)
+		if (high >= 8 && posX + 8 >= 0 && posX + 8 < DISPLAY_SIZE_X)
 			*(addr + 1) = (*(addr + 1) & ~*((unsigned char *)&mask + 1)) ^ *((unsigned char *)&date + 1);
 		addr += 16;
 	}
 }
 
-int x = SCREEN_SIZE_X;
+int x = DISPLAY_SIZE_X;
 int y = 0;
 
 void drawChar(char c)
 {
 	if (c == '\n')
 	{
-		x = SCREEN_SIZE_X;
+		x = DISPLAY_SIZE_X;
 		y += 8;
 	}
 	else if (c >= 32 && c < 127)
@@ -58,5 +58,5 @@ void drawString(char *s)
 int main()
 {
 	drawString("Hello World!\n");
-	*SCREEN_CTRL = SCREEN_REF;
+	*display_ctrl = DISPLAY_REF;
 }

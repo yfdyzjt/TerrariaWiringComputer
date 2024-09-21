@@ -71,7 +71,9 @@ startup
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
 
-## 构建
+## 使用
+
+### 构建
 
 在 docker 容器中执行下面的指令可完成从硬件到软件的构建
 
@@ -87,22 +89,20 @@ xmake
 copy_world
 ```
 
-#### 配置构建软件
+### 配置
 
-在 docker 容器中执行下面的指令配置需要构建的软件项目
-
-```bash
-xmake f --soft=[software_name]
-```
-
-*其中 software_name 对应在 `./software/src` 文件夹内的软件项目，默认值为 test*
-
-#### 配置构建硬件
-
-在 docker 容器中执行下面的指令配置需要构建的硬件项目
+在 docker 容器中执行下面的指令配置构建目标
 
 ```bash
-xmake f --hard=[hardware_name]
+xmake f --[ConfigKey]=[ConfigValue]
 ```
 
-*其中 hardware_name 对应在 `./hardware/module` 文件夹内的硬件项目，默认值为 mini*
+配置相关内容请参考下表
+
+| 配置项 | 默认值 | 路径 | 描述 |
+| --- | --- | --- | --- |
+| software | test | `software/src` | 需要编译的软件名称 |
+| world | terraria_computer_large | `hardware/world` | 构建使用的世界名称 |
+| cpu | cpu_rv32imc | `hardware/wiring/cpu` | 构建使用的CPU名称 |
+| driver | driver_portal_gun_station_x20_6.96kHz | `hardware/wiring/driver` | 构建使用的驱动名称 |
+| ram | 4K | `-` | 构建使用的数据RAM大小（支持K和M后缀） |

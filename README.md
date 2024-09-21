@@ -71,38 +71,38 @@ startup
 
 If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration mod, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
 
-## Build
+## Usage
 
-Execute the following command in the Docker container to complete the build from hardware to software:
+### Build
+
+Run the following command inside the Docker container to complete the hardware and software build:
 
 ```bash
 xmake
 ```
 
-*The generated files will be placed in the `./system` folder.*
+*The generated files will be placed in the ./system folder*
 
-Execute the following command in the project directory to copy the generated world files to the Terraria and tModLoader world save folders:
+Execute the following command in the project directory to copy the generated world file to the Terraria and tModLoader world save folders:
 
 ```bash
 copy_world
 ```
 
-#### Configure Software Build
+### Configuration
 
-Execute the following command in the Docker container to configure the software project you want to build:
-
-```bash
-xmake f --soft=[software_name]
-```
-
-*Where software_name corresponds to a software project in the `./software/src` folder, with a default value of test.*
-
-#### Configure Hardware Build
-
-Execute the following command in the Docker container to configure the hardware project you want to build:
+Run the following command inside the Docker container to configure the build target:
 
 ```bash
-xmake f --hard=[hardware_name]
+xmake f --[ConfigKey]=[ConfigValue]
 ```
 
-*Where hardware_name corresponds to a hardware project in the `./hardware/module` folder, with a default value of mini.*
+Refer to the table below for configuration options:
+
+| Config Key | Default Value | Path | Description |
+| ---- | ---- | ---- | ---- |
+| software | test | software/src | Name of the software to compile |
+| world | terraria_computer_large | hardware/world | Name of the world for the build |
+| cpu | cpu_rv32imc | hardware/wiring/cpu | Name of the CPU for the build |
+| driver | driver_portal_gun_station_x20_6.96kHz | hardware/wiring/driver | Name of the driver for the build |
+| ram | 4K | - | Size of the data RAM for the build (supports K and M suffixes) |

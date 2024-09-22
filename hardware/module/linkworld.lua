@@ -22,17 +22,15 @@ function Node:fit(width, height)
     elseif width <= self.width and height <= self.height then
         self.used = true
         self.right = Node:new(self.x + width, self.y, self.width - width, self.height)
-        self.down = Node:new(self.x, self.y + height, self.width, self.height - height)
+        self.down = Node:new(self.x, self.y + height, width, self.height - height)
         return self
     else
         return nil
     end
 end
 
-function SortByArea(a, b)
-    local areaA = a.sch.MaxTilesX * a.sch.MaxTilesY
-    local areaB = b.sch.MaxTilesX * b.sch.MaxTilesY
-    return areaA > areaB
+function SortByWidth(a, b)
+    return a.sch.MaxTilesX > b.sch.MaxTilesX
 end
 
 function Link(world, parts)
@@ -49,13 +47,14 @@ function Link(world, parts)
         end
     end
     local io_root = Node:new(0, 0, io_size_x, io_size_y)
-    table.sort(io_parts, SortByArea)
+    table.sort(io_parts, SortByWidth)
     for _, io_part in ipairs(io_parts) do
         local node = io_root:fit(io_part.sch.MaxTilesX, io_part.sch.MaxTilesY)
         if node then
             local pos_x = range + io_size_x - io_part.sch.MaxTilesX - node.x
             local pos_y = range + io_size_y - io_part.sch.MaxTilesY - node.y
             local pos = Point(pos_x, pos_y)
+            print(string.format("Paste sch: %s to (%d, %d)", io_part.name, pos.X, pos.Y))
             Tool.Paste(world, pos, io_part.sch)
             if io_part.env.SpawnPos then
                 world.SpawnTileX = pos_x + io_part.env.SpawnPos[1]
@@ -66,13 +65,14 @@ function Link(world, parts)
         end
     end
 
-    local root = Node:new(range, range, world.MaxTilesX - range, world.MaxTilesY - range)
+    local root = Node:new(0, 0, world.MaxTilesX - 2 * range, world.MaxTilesY - 2 * range)
     local io_node = root:fit(io_size_x, io_size_y)
-    table.sort(parts, SortByArea)
+    table.sort(parts, SortByWidth)
     for _, part in ipairs(parts) do
         local node = root:fit(part.sch.MaxTilesX, part.sch.MaxTilesY)
         if node then
-            local pos = Point(node.x, node.y)
+            local pos = Point(range + node.x, range + node.y)
+            print(string.format("Paste sch: %s to (%d, %d)", part.name, pos.X, pos.Y))
             Tool.Paste(world, pos, part.sch)
         else
             error("Could not fit part into the world area.")

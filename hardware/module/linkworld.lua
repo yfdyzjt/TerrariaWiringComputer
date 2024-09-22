@@ -53,7 +53,7 @@ function Link(world, parts)
         end
     end
     local io_root = Node:new(0, 0, io_size_x, io_size_y)
-    table.sort(io_parts, SortByArea)
+    table.sort(io_parts, SortByWidth)
     for _, io_part in ipairs(io_parts) do
         local node = io_root:fit(io_part.sch.MaxTilesX, io_part.sch.MaxTilesY)
         if node then
@@ -73,7 +73,7 @@ function Link(world, parts)
 
     local root = Node:new(0, 0, world.MaxTilesX - 2 * range, world.MaxTilesY - 2 * range)
     local io_node = root:fit(io_size_x, io_size_y)
-    table.sort(parts, SortByArea)
+    table.sort(parts, SortByWidth)
     for _, part in ipairs(parts) do
         local node = root:fit(part.sch.MaxTilesX, part.sch.MaxTilesY)
         if node then

@@ -29,6 +29,12 @@ function Node:fit(width, height)
     end
 end
 
+function SortByArea(a, b)
+    local a_area = a.sch.MaxTilesX * a.sch.MaxTilesY
+    local b_area = b.sch.MaxTilesX * b.sch.MaxTilesY
+    return a_area > b_area
+end
+
 function SortByWidth(a, b)
     return a.sch.MaxTilesX > b.sch.MaxTilesX
 end
@@ -47,35 +53,35 @@ function Link(world, parts)
         end
     end
     local io_root = Node:new(0, 0, io_size_x, io_size_y)
-    table.sort(io_parts, SortByWidth)
+    table.sort(io_parts, SortByArea)
     for _, io_part in ipairs(io_parts) do
         local node = io_root:fit(io_part.sch.MaxTilesX, io_part.sch.MaxTilesY)
         if node then
             local pos_x = range + io_size_x - io_part.sch.MaxTilesX - node.x
             local pos_y = range + io_size_y - io_part.sch.MaxTilesY - node.y
             local pos = Point(pos_x, pos_y)
-            print(string.format("Paste sch: %s to (%d, %d)", io_part.name, pos.X, pos.Y))
+            print(string.format("Paste part: %s to (%d, %d)", io_part.name, pos.X, pos.Y))
             Tool.Paste(world, pos, io_part.sch)
             if io_part.env.SpawnPos then
                 world.SpawnTileX = pos_x + io_part.env.SpawnPos[1]
                 world.SpawnTileY = pos_y + io_part.env.SpawnPos[2]
             end
         else
-            error("Could not fit io part into the io area.")
+            print(string.format("Could not fit io part: %s into the io area.", io_part.name))
         end
     end
 
     local root = Node:new(0, 0, world.MaxTilesX - 2 * range, world.MaxTilesY - 2 * range)
     local io_node = root:fit(io_size_x, io_size_y)
-    table.sort(parts, SortByWidth)
+    table.sort(parts, SortByArea)
     for _, part in ipairs(parts) do
         local node = root:fit(part.sch.MaxTilesX, part.sch.MaxTilesY)
         if node then
             local pos = Point(range + node.x, range + node.y)
-            print(string.format("Paste sch: %s to (%d, %d)", part.name, pos.X, pos.Y))
+            print(string.format("Paste part: %s to (%d, %d)", part.name, pos.X, pos.Y))
             Tool.Paste(world, pos, part.sch)
         else
-            error("Could not fit part into the world area.")
+            print(string.format("Could not fit part: %s into the world area.", part.name))
         end
     end
 end

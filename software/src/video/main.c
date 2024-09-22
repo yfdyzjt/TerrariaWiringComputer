@@ -8,7 +8,7 @@ int main()
 
 	while (ptr < sizeof(video) / sizeof(unsigned int))
 	{
-		for (y = 0; y < DISPLAY_SIZE_Y; y++)
+		for (y = 0; y < 48; y++)
 		{
 			*(unsigned int *)&display_buffer[(y << 4) + 0] = video[ptr++];
 			*(unsigned int *)&display_buffer[(y << 4) + 4] = video[ptr++];

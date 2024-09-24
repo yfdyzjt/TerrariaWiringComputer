@@ -30,7 +30,7 @@ local function _convert_source_files(source_files, include_dirs)
     return include_files
 end
 
-local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size)
+local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, have_input)
     if section_name and section_size and section_size ~= 0 and section_type then
         local include_match = false
         for _, include_file in ipairs(include_files) do
@@ -47,6 +47,7 @@ local function _convert_section(include_files, section_name, section_size, secti
                     io_part.type = "output"
                 else
                     io_part.type = "input"
+                    have_input = true
                 end
                 table.insert(io_parts, io_part)
                 include_match = true
@@ -64,23 +65,24 @@ local function _convert_section(include_files, section_name, section_size, secti
             end
         end
     end
-    return io_parts, text_size, rodata_size
+    return io_parts, text_size, rodata_size, have_input
 end
 
 local function _convert_object_files(object_files, include_files, bin_dir)
     local text_size = 0
     local rodata_size = 0
+    local have_input = false
     local io_parts = {}
 
     for _, object_file in ipairs(object_files) do
         local object_file_content = os.iorunv(bin_dir .. "riscv-none-elf-readelf", {"-S", "--wide", object_file})
         for line in object_file_content:gmatch("[^\r\n]+") do
             local section_name, section_size, section_type = line:match("%s+%[%s*%d+%]%s+([%p%w]+)%s+[%p%w]+%s+%x+%s+%x+%s+(%x+)%s+%x+%s+([%w]+)")
-            io_parts, text_size, rodata_size = _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size)
+            io_parts, text_size, rodata_size, have_input = _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, have_input)
         end
     end
 
-    return io_parts, text_size, rodata_size
+    return io_parts, text_size, rodata_size, have_input
 end
 
 local function _parse_size(size_str)
@@ -184,7 +186,7 @@ function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ra
     local data_parts = {}
 
     local include_files = _convert_source_files(source_files, include_dirs)
-    local io_parts, text_size, rodata_size = _convert_object_files(object_files, include_files, bin_dir)
+    local io_parts, text_size, rodata_size, have_input = _convert_object_files(object_files, include_files, bin_dir)
     local data_size = _parse_size(ram)
     local have_data_rom = rodata_size >= data_size / 2
 
@@ -206,7 +208,7 @@ function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ra
     if have_data_rom then _combine_parts(parts, rodata_parts) end
     _combine_parts(parts, data_parts)
     _combine_parts(parts, io_parts)
-    table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"})
+    if not have_input then table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"}) end
     table.insert(parts, {name = driver, file = driver, type = "driver"})
 
     return parts, link_parts

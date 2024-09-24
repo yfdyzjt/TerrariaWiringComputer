@@ -12,10 +12,8 @@ void setPixel(int posX, int posY, unsigned char pixel)
 
 int main()
 {
-	int x = -1;
-	// DISPLAY_SIZE_X / 2;
-	int y = -1;
-	// DISPLAY_SIZE_Y / 2;
+	int x = DISPLAY_SIZE_X / 2;
+	int y = DISPLAY_SIZE_Y / 2;
 
 	while (1)
 	{

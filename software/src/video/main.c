@@ -10,9 +10,9 @@ int main()
 	{
 		for (y = 0; y < 48; y++)
 		{
-			*(unsigned int *)&display_buffer[(y << 4) + 0] = video[ptr++];
-			*(unsigned int *)&display_buffer[(y << 4) + 4] = video[ptr++];
+			*(unsigned int *)&_display_buffer[(y << 4) + 0] = video[ptr++];
+			*(unsigned int *)&_display_buffer[(y << 4) + 4] = video[ptr++];
 		}
-		*display_ctrl = DISPLAY_REF;
+		*_display_ctrl = DISPLAY_REF;
 	}
 }

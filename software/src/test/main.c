@@ -4,7 +4,7 @@
 
 void drawByteGrid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
 {
-	unsigned char *addr = &display_buffer[posX / 8 + posY * 16];
+	unsigned char *addr = &_display_buffer[posX / 8 + posY * 16];
 
 	int i;
 
@@ -58,5 +58,5 @@ void drawString(char *s)
 int main()
 {
 	drawString("Hello World!\n");
-	*display_ctrl = DISPLAY_REF;
+	*_display_ctrl = DISPLAY_REF;
 }

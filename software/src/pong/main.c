@@ -15,12 +15,19 @@ typedef struct
 	int x, y;
 	int dx, dy;
 	int v;
+	int o;
 } Ball;
 
 typedef struct
 {
 	int x, y;
 } Paddle;
+
+typedef struct
+{
+	int x, y;
+	int num;
+} Score;
 
 void draw_grid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
 {
@@ -56,6 +63,10 @@ void draw_pixel(int posX, int posY, unsigned char pixel)
 	*addr &= ~(1 << offsetX);
 	*addr ^= pixel << offsetX;
 }
+unsigned char get_pixel(int posX, int posY)
+{
+	return (_display_buffer[posX / 8 + posY * 16] >> (posX % 8)) & 1;
+}
 
 int fixed_point_multiply(int a, int b)
 {
@@ -74,7 +85,19 @@ short get_high_bits(int num)
 
 void draw_ball(Ball *ball)
 {
-	draw_pixel((int)get_high_bits(ball->x), (int)get_high_bits(ball->y), 1);
+	if (get_pixel((int)get_high_bits(ball->x), (int)get_high_bits(ball->y)))
+		ball->o = 1;
+	else
+	{
+		ball->o = 0;
+		draw_pixel((int)get_high_bits(ball->x), (int)get_high_bits(ball->y), 1);
+	}
+}
+
+void erase_ball(Ball *ball)
+{
+	if (!ball->o)
+		draw_pixel((int)get_high_bits(ball->x), (int)get_high_bits(ball->y), 0);
 }
 
 void draw_paddle(Paddle *paddle)
@@ -85,54 +108,30 @@ void draw_paddle(Paddle *paddle)
 	}
 }
 
-void draw_score(int score, int x, int y)
+void draw_paddle_increase(Paddle *paddle, int direction)
 {
-	switch (score)
+	if (direction == 1)
 	{
-	case 0:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['0' - 32]);
-		break;
-	case 1:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['1' - 32]);
-		break;
-	case 2:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['2' - 32]);
-		break;
-	case 3:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['3' - 32]);
-		break;
-	case 4:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['4' - 32]);
-		break;
-	case 5:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['5' - 32]);
-		break;
-	case 6:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['6' - 32]);
-		break;
-	case 7:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['7' - 32]);
-		break;
-	case 8:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['8' - 32]);
-		break;
-	case 9:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['9' - 32]);
-		break;
-	case 10:
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii['1' - 32]);
-		draw_grid(x + 6, y, 5, 7, (unsigned char *)g57Ascii['0' - 32]);
-		break;
-	default:
-		break;
+		draw_pixel(paddle->x, paddle->y - 1, 0);
+		draw_pixel(paddle->x, paddle->y + PADDLE_HEIGHT - 1, 1);
+	}
+	else if (direction == -1)
+	{
+		draw_pixel(paddle->x, paddle->y + 1, 1);
+		draw_pixel(paddle->x, paddle->y + PADDLE_HEIGHT + 1, 0);
 	}
 }
 
-void draw_line(int x)
+void draw_score(Score *score)
 {
-	for (int i = 0; i < DISPLAY_SIZE_Y; i += 2)
+	if (score->num < 10)
 	{
-		draw_pixel(x, i, 1);
+		draw_grid(score->x, score->y, 5, 7, (unsigned char *)g57Ascii[score->num + 16]);
+	}
+	else
+	{
+		draw_grid(score->x + 3, score->y, 5, 7, (unsigned char *)g57Ascii['1' - 32]);
+		draw_grid(score->x - 3, score->y, 6, 7, (unsigned char *)g57Ascii['0' - 32]);
 	}
 }
 
@@ -143,6 +142,14 @@ void draw_string(char *s, int x, int y)
 	{
 		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
 		x -= 6;
+	}
+}
+
+void draw_line(int x)
+{
+	for (int i = 0; i < DISPLAY_SIZE_Y; i += 2)
+	{
+		draw_pixel(x, i, 1);
 	}
 }
 
@@ -160,19 +167,34 @@ void init_ball(Ball *ball)
 {
 	ball->x = (DISPLAY_SIZE_X / 2) << 16;
 	ball->y = (_random_number % DISPLAY_SIZE_Y) << 16;
-	ball->dx = angleMap[_random_number % 8][0];
+	if (_random_number & 1)
+		ball->dx = angleMap[_random_number % 8][0];
+	else
+		ball->dx = -angleMap[_random_number % 8][0];
 	ball->dy = angleMap[_random_number % 8][1];
 	ball->v = 1 << 16;
+	draw_ball(ball);
 }
 
 void init_paddle(Paddle *paddle, int x)
 {
 	paddle->x = x;
 	paddle->y = DISPLAY_SIZE_Y / 2 - PADDLE_HEIGHT / 2;
+	draw_paddle(paddle);
 }
 
-void update_ball(Ball *ball, Paddle *left_paddle, Paddle *right_paddle, int *left_score, int *right_score)
+void init_score(Score *score, int x, int y)
 {
+	score->num = 0;
+	score->x = x;
+	score->y = y;
+	draw_score(score);
+}
+
+void update_ball(Ball *ball, Paddle *left_paddle, Paddle *right_paddle, Score *left_score, Score *right_score)
+{
+	erase_ball(ball);
+
 	ball->x += fixed_point_multiply(ball->dx, ball->v);
 	ball->y += fixed_point_multiply(ball->dy, ball->v);
 
@@ -209,18 +231,19 @@ void update_ball(Ball *ball, Paddle *left_paddle, Paddle *right_paddle, int *lef
 	}
 	else if (get_high_bits(ball->x) < 0)
 	{
-		(*right_score)++;
+		left_score->num++;
+		draw_score(left_score);
 		init_ball(ball);
+		return;
 	}
 	else if (get_high_bits(ball->x) >= DISPLAY_SIZE_X)
 	{
-		(*left_score)++;
+		right_score->num++;
+		draw_score(right_score);
 		init_ball(ball);
+		return;
 	}
 
-	draw_score(*left_score, DISPLAY_SIZE_X / 4, 8);
-	draw_score(*right_score, 3 * DISPLAY_SIZE_X / 4, 8);
-	draw_line(DISPLAY_SIZE_X / 2);
 	draw_ball(ball);
 }
 
@@ -228,10 +251,16 @@ void move_paddle(Paddle *paddle, int direction)
 {
 	paddle->y += direction;
 	if (paddle->y < 0)
+	{
 		paddle->y = 0;
+		direction = 0;
+	}
 	else if (paddle->y > DISPLAY_SIZE_Y - PADDLE_HEIGHT)
+	{
 		paddle->y = DISPLAY_SIZE_Y - PADDLE_HEIGHT;
-	draw_paddle(paddle);
+		direction = 0;
+	}
+	draw_paddle_increase(paddle, direction);
 }
 
 int player_input()
@@ -256,18 +285,20 @@ int ai_input(Ball *ball, Paddle *ai_paddle, int *ai_rand)
 	else
 		return 0;
 }
-int victory(int *left_score, int *right_score)
+int victory(Score *left_score, Score *right_score)
 {
-	if (*left_score > MAX_SCORE)
+	if (left_score->num > MAX_SCORE)
 	{
 		display_clear();
-		draw_string("Player Win!", 15, 24);
+		draw_string("Player Win!", 75, 28);
+		display_refresh();
 		return 1;
 	}
-	else if (*right_score > MAX_SCORE)
+	else if (right_score->num > MAX_SCORE)
 	{
 		display_clear();
-		draw_string("Computer Win!", 9, 24);
+		draw_string("Computer Win!", 81, 28);
+		display_refresh();
 		return 1;
 	}
 
@@ -278,19 +309,23 @@ int main()
 {
 	Ball ball;
 	Paddle left_paddle, right_paddle;
-	int left_score = 0, right_score = 0;
+	Score left_score, right_score;
+
 	int ai_rand = _random_number % PADDLE_HEIGHT;
 
 	while (1)
 	{
-		init_ball(&ball);
+		display_clear();
+
+		draw_line(DISPLAY_SIZE_X / 2);
 		init_paddle(&left_paddle, DISPLAY_SIZE_X - 3);
 		init_paddle(&right_paddle, 2);
+		init_score(&right_score, DISPLAY_SIZE_X / 4, 8);
+		init_score(&left_score, 3 * DISPLAY_SIZE_X / 4, 8);
+		init_ball(&ball);
 
 		while (1)
 		{
-			display_clear();
-
 			move_paddle(&left_paddle, player_input());
 			move_paddle(&right_paddle, ai_input(&ball, &right_paddle, &ai_rand));
 

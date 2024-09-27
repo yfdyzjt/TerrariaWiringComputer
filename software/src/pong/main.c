@@ -117,8 +117,8 @@ void draw_paddle_increase(Paddle *paddle, int direction)
 	}
 	else if (direction == -1)
 	{
-		draw_pixel(paddle->x, paddle->y + 1, 1);
-		draw_pixel(paddle->x, paddle->y + PADDLE_HEIGHT + 1, 0);
+		draw_pixel(paddle->x, paddle->y, 1);
+		draw_pixel(paddle->x, paddle->y + PADDLE_HEIGHT, 0);
 	}
 }
 
@@ -276,7 +276,7 @@ int player_input()
 
 int ai_input(Ball *ball, Paddle *ai_paddle, int *ai_rand)
 {
-	if (get_abs(ball->x + ball->dx) <= ball->dx)
+	if (get_abs(ai_paddle->x - ball->x) <= ball->dx)
 		*ai_rand = _random_number % PADDLE_HEIGHT;
 	if ((int)get_high_bits(ball->y) < (ai_paddle->y + *ai_rand))
 		return -1;

@@ -1,6 +1,7 @@
-#include "five_way_motion_sensor.h"
+#include "two_way_motion_sensor.h"
 #include "display_96_64.h"
 #include "random_number_generator.h"
+#include "driver.h"
 
 #define PADDLE_HEIGHT 8
 #define VELOCITY_FACTOR 78643
@@ -281,8 +282,7 @@ int main()
 		}
 		while (1)
 		{
-			if (_motion_sensor_buffer & MOTION_SENSOR_J)
-				break;
+			driver_off();
 		}
 	}
 	return 0;

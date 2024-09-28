@@ -41,8 +41,9 @@ end
 
 function Link(world, parts)
     local range = 5
+    local io_range = 12
 
-    local io_size_x = 360
+    local io_size_x = 350
     local io_size_y = 500
     local io_parts = {}
     for i = #parts, 1, -1 do
@@ -57,8 +58,8 @@ function Link(world, parts)
     for _, io_part in ipairs(io_parts) do
         local node = io_root:fit(io_part.sch.MaxTilesX, io_part.sch.MaxTilesY)
         if node then
-            local pos_x = range + io_size_x - io_part.sch.MaxTilesX - node.x
-            local pos_y = range + io_size_y - io_part.sch.MaxTilesY - node.y
+            local pos_x = io_range + io_size_x - io_part.sch.MaxTilesX - node.x
+            local pos_y = io_range + io_size_y - io_part.sch.MaxTilesY - node.y
             local pos = Point(pos_x, pos_y)
             print(string.format("Paste part: %s to (%d, %d)", io_part.name, pos.X, pos.Y))
             Tool.Paste(world, pos, io_part.sch)
@@ -72,7 +73,7 @@ function Link(world, parts)
     end
 
     local root = Node:new(0, 0, world.MaxTilesX - 2 * range, world.MaxTilesY - 2 * range)
-    local io_node = root:fit(io_size_x, io_size_y)
+    local io_node = root:fit(io_size_x + io_range - range, io_size_y + io_range - range)
     table.sort(parts, SortByWidth)
     for _, part in ipairs(parts) do
         local node = root:fit(part.sch.MaxTilesX, part.sch.MaxTilesY)

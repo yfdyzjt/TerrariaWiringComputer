@@ -6,5 +6,5 @@ void reset()
     extern int main();
     main();
 
-    *DRIVER = DRIVER_OFF;
+    driver_off();
 }

@@ -13,16 +13,13 @@ local function _convert_source_files(source_files, include_dirs)
         for include_file in source_file_content:gmatch('#include%s+"(.-)"') do
             for _, include_dir in ipairs(include_dirs) do
                 if os.isfile(include_dir .. "/" .. include_file) then
-                    local include_match = false
                     for _, file in ipairs(include_files) do
                         if include_file == file then
-                            include_match = true
-                            break
+                            goto match
                         end
                     end
-                    if not include_match then
-                        table.insert(include_files, include_file)
-                    end
+                    table.insert(include_files, include_file)
+                    :: match ::
                 end
             end
         end
@@ -32,7 +29,6 @@ end
 
 local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, have_input)
     if section_name and section_size and section_size ~= 0 and section_type then
-        local include_match = false
         for _, include_file in ipairs(include_files) do
             if section_name == include_file then
                 local io_part_name = section_name:gsub("%.h$", "")
@@ -50,20 +46,18 @@ local function _convert_section(include_files, section_name, section_size, secti
                     have_input = true
                 end
                 table.insert(io_parts, io_part)
-                include_match = true
                 -- print(string.format("include section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-                break
+                goto match
             end
         end
-        if not include_match then
-            if string.find(section_type, "X") then
-                text_size = text_size + tonumber(section_size, 16)
-                -- print(string.format("text section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-            elseif string.find(section_type, "A") and not (string.find(section_type, "W") or string.find(section_type, "X")) then
-                rodata_size = rodata_size + tonumber(section_size, 16)
-                -- print(string.format("rodata section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-            end
+        if string.find(section_type, "X") then
+            text_size = text_size + tonumber(section_size, 16)
+            -- print(string.format("text section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
+        elseif string.find(section_type, "A") and not (string.find(section_type, "W") or string.find(section_type, "X")) then
+            rodata_size = rodata_size + tonumber(section_size, 16)
+            -- print(string.format("rodata section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
         end
+        :: match ::
     end
     return io_parts, text_size, rodata_size, have_input
 end

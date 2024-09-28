@@ -13,6 +13,6 @@ int main()
 			*(unsigned int *)&_display_buffer[(y << 4) + 0] = video[ptr++];
 			*(unsigned int *)&_display_buffer[(y << 4) + 4] = video[ptr++];
 		}
-		*_display_ctrl = DISPLAY_REF;
+		display_refresh();
 	}
 }

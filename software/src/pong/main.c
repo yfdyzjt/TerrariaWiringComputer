@@ -2,8 +2,6 @@
 #include "display_96_64.h"
 #include "random_number_generator.h"
 
-#include "ascii_5_7.h"
-
 #define PADDLE_HEIGHT 8
 #define VELOCITY_FACTOR 78643
 #define MAX_SCORE 10
@@ -29,40 +27,6 @@ typedef struct
 	int num;
 } Score;
 
-void draw_grid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)
-{
-	unsigned char *addr = &_display_buffer[posX / 8 + posY * 16];
-
-	int i;
-
-	int high, low;
-	unsigned short mask, date;
-
-	low = posX % 8;
-	high = low + sizeX;
-	mask = (unsigned short)(((1 << high) - 1) ^ ((1 << low) - 1));
-
-	for (i = 0; i < sizeY; i++)
-	{
-		if (i + posY < 0 && i + posY >= DISPLAY_SIZE_Y)
-			continue;
-		date = (unsigned short)((grid[i] << low) & mask);
-
-		if (posX >= 0 && posX < DISPLAY_SIZE_X)
-			*addr = (*addr & ~*((unsigned char *)&mask)) ^ *((unsigned char *)&date);
-		if (high >= 8 && posX + 8 >= 0 && posX + 8 < DISPLAY_SIZE_X)
-			*(addr + 1) = (*(addr + 1) & ~*((unsigned char *)&mask + 1)) ^ *((unsigned char *)&date + 1);
-		addr += 16;
-	}
-}
-
-void draw_pixel(int posX, int posY, unsigned char pixel)
-{
-	unsigned char *addr = &_display_buffer[posX / 8 + posY * 16];
-	int offsetX = posX % 8;
-	*addr &= ~(1 << offsetX);
-	*addr ^= pixel << offsetX;
-}
 unsigned char get_pixel(int posX, int posY)
 {
 	return (_display_buffer[posX / 8 + posY * 16] >> (posX % 8)) & 1;
@@ -126,41 +90,20 @@ void draw_score(Score *score)
 {
 	if (score->num < 10)
 	{
-		draw_grid(score->x, score->y, 5, 7, (unsigned char *)g57Ascii[score->num + 16]);
+		draw_char(score->x, score->y, (char)(score->num + 48));
 	}
 	else
 	{
-		draw_grid(score->x + 3, score->y, 5, 7, (unsigned char *)g57Ascii['1' - 32]);
-		draw_grid(score->x - 3, score->y, 6, 7, (unsigned char *)g57Ascii['0' - 32]);
+		draw_string(score->x + 6, score->y, "10");
 	}
 }
 
-void draw_string(char *s, int x, int y)
-{
-	int i = 0;
-	while (s[i] != '\0')
-	{
-		draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
-		x -= 6;
-	}
-}
-
-void draw_line(int x)
+void draw_dotted_line(int x)
 {
 	for (int i = 0; i < DISPLAY_SIZE_Y; i += 2)
 	{
 		draw_pixel(x, i, 1);
 	}
-}
-
-void display_clear()
-{
-	*_display_ctrl = DISPLAY_CLC;
-}
-
-void display_refresh()
-{
-	*_display_ctrl = DISPLAY_REF;
 }
 
 void init_ball(Ball *ball)
@@ -290,14 +233,14 @@ int victory(Score *left_score, Score *right_score)
 	if (left_score->num > MAX_SCORE)
 	{
 		display_clear();
-		draw_string("Player Win!", 75, 28);
+		draw_string(81, 28, "Player Win!");
 		display_refresh();
 		return 1;
 	}
 	else if (right_score->num > MAX_SCORE)
 	{
 		display_clear();
-		draw_string("Computer Win!", 81, 28);
+		draw_string(87, 28, "Computer Win!");
 		display_refresh();
 		return 1;
 	}
@@ -317,7 +260,7 @@ int main()
 	{
 		display_clear();
 
-		draw_line(DISPLAY_SIZE_X / 2);
+		draw_dotted_line(DISPLAY_SIZE_X / 2);
 		init_paddle(&left_paddle, DISPLAY_SIZE_X - 3);
 		init_paddle(&right_paddle, 2);
 		init_score(&right_score, DISPLAY_SIZE_X / 4, 8);

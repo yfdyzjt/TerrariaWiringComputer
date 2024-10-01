@@ -41,7 +41,7 @@ end
 
 function Link(world, parts)
     local range = 5
-    local io_range = 12
+    local io_range = 15
 
     local io_size_x = 350
     local io_size_y = 500

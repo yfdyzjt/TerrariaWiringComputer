@@ -18,8 +18,7 @@ void draw_pixel(int posX, int posY, unsigned char pixel)
 {
     unsigned char *addr = &_display_buffer[posX / 8 + posY * 16];
     int offsetX = posX % 8;
-    *addr &= ~(1 << offsetX);
-    *addr ^= pixel << offsetX;
+    *addr = pixel ? *addr | (1 << offsetX) : *addr & ~(1 << offsetX);
 }
 
 void draw_grid(int posX, int posY, int sizeX, int sizeY, unsigned char *grid)

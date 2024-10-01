@@ -1,4 +1,4 @@
-#include "two_way_motion_sensor.h"
+#include "five_way_motion_sensor.h"
 #include "display_96_64.h"
 #include "random_number_generator.h"
 #include "driver.h"
@@ -280,10 +280,8 @@ int main()
 
 			display_refresh();
 		}
-		while (1)
-		{
-			driver_off();
-		}
+
+		driver_off();
 	}
 	return 0;
 }

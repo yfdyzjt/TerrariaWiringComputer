@@ -27,7 +27,7 @@ local function _convert_source_files(source_files, include_dirs)
     return include_files
 end
 
-local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, have_input)
+local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, data_size, have_input)
     if section_name and section_size and section_size ~= 0 and section_type then
         for _, include_file in ipairs(include_files) do
             if section_name == include_file then
@@ -56,15 +56,19 @@ local function _convert_section(include_files, section_name, section_size, secti
         elseif string.find(section_type, "A") and not (string.find(section_type, "W") or string.find(section_type, "X")) then
             rodata_size = rodata_size + tonumber(section_size, 16)
             -- print(string.format("rodata section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
+        elseif string.find(section_type, "A") and string.find(section_type, "W") and not string.find(section_type, "X") then
+            data_size = data_size + tonumber(section_size, 16)
+            -- print(string.format("data section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
         end
         :: match ::
     end
-    return io_parts, text_size, rodata_size, have_input
+    return io_parts, text_size, rodata_size, data_size, have_input
 end
 
 local function _convert_object_files(object_files, include_files, bin_dir)
     local text_size = 0
     local rodata_size = 0
+    local data_size = 0
     local have_input = false
     local io_parts = {}
 
@@ -72,11 +76,11 @@ local function _convert_object_files(object_files, include_files, bin_dir)
         local object_file_content = os.iorunv(bin_dir .. "riscv-none-elf-readelf", {"-S", "--wide", object_file})
         for line in object_file_content:gmatch("[^\r\n]+") do
             local section_name, section_size, section_type = line:match("%s+%[%s*%d+%]%s+([%p%w]+)%s+[%p%w]+%s+%x+%s+%x+%s+(%x+)%s+%x+%s+([%w]+)")
-            io_parts, text_size, rodata_size, have_input = _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, have_input)
+            io_parts, text_size, rodata_size, data_size, have_input = _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, data_size, have_input)
         end
     end
 
-    return io_parts, text_size, rodata_size, have_input
+    return io_parts, text_size, rodata_size, data_size, have_input
 end
 
 local function _parse_size(size_str)
@@ -180,16 +184,18 @@ function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ra
     local data_parts = {}
 
     local include_files = _convert_source_files(source_files, include_dirs)
-    local io_parts, text_size, rodata_size, have_input = _convert_object_files(object_files, include_files, bin_dir)
-    local data_size = _parse_size(ram)
-    local have_data_rom = rodata_size >= data_size / 2
+    local io_parts, text_size, rodata_size, data_size, have_input = _convert_object_files(object_files, include_files, bin_dir)
+    local target_data_size = _parse_size(ram)
+    local have_data_rom = rodata_size >= target_data_size / 2 and data_size < target_data_size / 2
 
     -- print(string.format("text size: %d bytes", text_size))
     -- print(string.format("rodata size: %d bytes", rodata_size))
+    -- print(string.format("data size: %d bytes", data_size))
 
+    if data_size > target_data_size then error("ram cannot hold data.") end
     text_parts, origin = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", text_size, origin)
     if have_data_rom then rodata_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", rodata_size, origin) end
-    data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", data_size, origin)
+    data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", target_data_size, origin)
     origin = _assign_mem_addr(io_parts, origin)
     
     table.insert(link_parts, _link_parts("INS_ROM", text_parts))

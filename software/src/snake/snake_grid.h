@@ -2,7 +2,7 @@
 #define SNAKE_GRID
 
 const unsigned char zero_grid[5] = {0, 0, 0, 0, 0};
-const unsigned char food_grid[5] = {0b01010, 0b10101, 0b10001, 0b10001, 0b01110};
+const unsigned char food_grid[5] = {0b00100, 0b01110, 0b11111, 0b01110, 0b00100};
 const unsigned char head_grid[4][5] = {
     {0b00100, 0b01110, 0b10101, 0b11111, 0b01110},
     {0b01110, 0b11111, 0b10101, 0b01110, 0b00100},

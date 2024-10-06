@@ -6,9 +6,11 @@
 #include "snake_grid.h"
 
 #define GRID_SIZE 5
+#define GRID_OFFSET_X 2
+#define GRID_OFFSET_Y 2
 
 #define GAME_SIZE_X 16
-#define GAME_SIZE_Y 13
+#define GAME_SIZE_Y 12
 
 #define SNAKE_MAX_LENGTH (GAME_SIZE_X * GAME_SIZE_Y)
 #define SNAKE_INIT_LENGTH 4
@@ -59,7 +61,7 @@ void bitmap_set_bit(Bitmap *h, signed char x, signed char y, unsigned char b)
 
 void draw_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid((int)x * GRID_SIZE, (int)y * GRID_SIZE, GRID_SIZE, GRID_SIZE, grid);
+    draw_grid((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
 }
 
 void erase_grid(signed char x, signed char y)
@@ -187,8 +189,14 @@ void dec_to_pos(unsigned char d, signed char *x, signed char *y)
         (*y)--;
         break;
     }
-    *x = (*x % GAME_SIZE_X + GAME_SIZE_X) % GAME_SIZE_X;
-    *y = (*y % GAME_SIZE_Y + GAME_SIZE_Y) % GAME_SIZE_Y;
+    if (*x < 0)
+        *x += GAME_SIZE_X;
+    else if (*x >= GAME_SIZE_X)
+        *x -= GAME_SIZE_X;
+    if (*y < 0)
+        *y += GAME_SIZE_Y;
+    else if (*y >= GAME_SIZE_Y)
+        *y -= GAME_SIZE_Y;
 }
 
 void player_input(Snake *s)

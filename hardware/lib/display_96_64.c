@@ -59,6 +59,6 @@ void draw_string(int posX, int posY, char *s)
     while (s[i] != '\0')
     {
         posX -= 6;
-        draw_char(posX, posY, s[i++]);
+        draw_grid(posX, posY, 6, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
     }
 }

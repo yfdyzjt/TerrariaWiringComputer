@@ -19,6 +19,9 @@
 #define SNAKE_DEC_R 2
 #define SNAKE_DEC_L 3
 
+#define SCORE_POS_X DISPLAY_SIZE_X
+#define SCORE_POS_Y 1
+
 const unsigned char snake_body_link_map[16] = {0, 0, 1, 2, 0, 0, 3, 4, 4, 2, 5, 0, 3, 1, 0, 5};
 
 typedef struct
@@ -46,6 +49,59 @@ typedef struct
     short front;
     short rear;
 } Queue;
+
+typedef struct
+{
+    short num;
+    char *str;
+} Score;
+
+char *itoa(int value, char *str, int base)
+{
+    char *ret = str;
+    if (value == 0)
+    {
+        *str++ = '0';
+    }
+    else
+    {
+        int sum;
+
+        if (base == 10 && value < 0)
+        {
+            value = -value;
+            *str++ = '-';
+        }
+
+        while (value != 0)
+        {
+            sum = value % base;
+            *str++ = sum > 9 ? (char)(sum - 10) + 'a' : (char)sum + '0';
+            value /= base;
+        }
+
+        for (char *left = ret, *right = str - 1; left < right; left++, right--)
+        {
+            char tmp = *left;
+            *left = *right;
+            *right = tmp;
+        }
+    }
+    *str = '\0';
+    return ret;
+}
+
+void score_init(Score *sc, char *str)
+{
+    sc->num = 0;
+    sc->str = str;
+}
+
+void score_update(Score *sc)
+{
+    itoa((int)sc->num, sc->str, 10);
+    draw_string(SCORE_POS_X, SCORE_POS_Y, sc->str);
+}
 
 unsigned char bitmap_get_bit(Bitmap *h, signed char x, signed char y)
 {
@@ -212,7 +268,7 @@ void player_input(Snake *s)
         s->d = SNAKE_DEC_L;
 }
 
-signed char update(Bitmap *h, Queue *q, Snake *s, Food *f)
+signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc)
 {
     draw_snake_body(s->head_x, s->head_y, s->d, queue_peek_first(q));
     dec_to_pos(s->d, &s->head_x, &s->head_y);
@@ -232,7 +288,11 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f)
     queue_push(q, s->d);
     draw_snake_head(s->head_x, s->head_y, s->d);
     if (s->food > 0)
+    {
         s->food--;
+        sc->num++;
+        score_update(sc);
+    }
     else
     {
         bitmap_set_bit(h, s->tail_x, s->tail_y, 0);
@@ -243,12 +303,27 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f)
     return 0;
 }
 
+void game_end_fail()
+{
+    draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Failure!");
+    display_refresh();
+}
+
+void game_end_victory()
+{
+    draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Victory!");
+    display_refresh();
+}
+
 int main()
 {
     Bitmap bitmap;
     Queue queue;
     Snake snake;
     Food food;
+    Score score;
+
+    char score_str[3] = {0};
 
     while (1)
     {
@@ -257,16 +332,19 @@ int main()
         queue_init(&queue);
         snake_init(&snake, &bitmap, &queue, GAME_SIZE_X / 2, GAME_SIZE_Y / 2, 0, SNAKE_INIT_LENGTH);
         food_rand_init(&food, &bitmap);
+        score_init(&score, score_str);
 
         while (1)
         {
             player_input(&snake);
-            if (update(&bitmap, &queue, &snake, &food))
+            if (update(&bitmap, &queue, &snake, &food, &score))
             {
+                game_end_fail();
                 break;
             }
             if (snake.length >= SNAKE_MAX_LENGTH)
             {
+                game_end_victory();
                 break;
             }
             display_refresh();

@@ -67,10 +67,7 @@ void erase_ball(Ball *ball)
 
 void draw_paddle(Paddle *paddle)
 {
-	for (int i = 0; i < PADDLE_HEIGHT; i++)
-	{
-		draw_pixel(paddle->x, paddle->y + i, 1);
-	}
+	draw_line(paddle->x, paddle->y, paddle->x, paddle->y + PADDLE_HEIGHT - 1, solid_line_one_func);
 }
 
 void draw_paddle_increase(Paddle *paddle, int direction)
@@ -99,12 +96,9 @@ void draw_score(Score *score)
 	}
 }
 
-void draw_dotted_line(int x)
+void draw_dotted_line()
 {
-	for (int i = 0; i < DISPLAY_SIZE_Y; i += 2)
-	{
-		draw_pixel(x, i, 1);
-	}
+	draw_line(DISPLAY_SIZE_X / 2, 0, DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y - 1, dotted_line_func);
 }
 
 void init_ball(Ball *ball)
@@ -261,7 +255,7 @@ int main()
 	{
 		display_clear();
 
-		draw_dotted_line(DISPLAY_SIZE_X / 2);
+		draw_dotted_line();
 		init_paddle(&left_paddle, DISPLAY_SIZE_X - 3);
 		init_paddle(&right_paddle, 2);
 		init_score(&right_score, DISPLAY_SIZE_X / 4, 8);

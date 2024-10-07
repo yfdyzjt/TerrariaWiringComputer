@@ -11,16 +11,25 @@
 
 #define GAME_SIZE_X 16
 #define GAME_SIZE_Y 12
+#define GAME_PIXEL_SIZE_X (GAME_SIZE_X * GRID_SIZE + 2 * GRID_OFFSET_X)
+#define GAME_PIXEL_SIZE_Y (GAME_SIZE_Y * GRID_SIZE + 2 * GRID_OFFSET_Y)
 
-#define SNAKE_MAX_LENGTH (GAME_SIZE_X * GAME_SIZE_Y)
-#define SNAKE_INIT_LENGTH 4
+#define SCORE_POS_X (DISPLAY_SIZE_X - 9)
+#define SCORE_POS_Y 2
+#define TIME_POS_X (DISPLAY_SIZE_X - 9)
+#define TIME_POS_Y (DISPLAY_SIZE_Y - 3)
+
 #define SNAKE_DEC_U 0
 #define SNAKE_DEC_D 1
 #define SNAKE_DEC_R 2
 #define SNAKE_DEC_L 3
 
-#define SCORE_POS_X DISPLAY_SIZE_X
-#define SCORE_POS_Y 1
+#define SNAKE_FOOD_SCORE 1
+#define SNAKE_BIG_FOOD_SCORE 4
+#define SNAKE_INIT_LENGTH 4
+#define SNAKE_MAX_LENGTH (GAME_SIZE_X * GAME_SIZE_Y)
+#define FOOD_MAX_TIME 32
+#define FOOD_BIG_PROB 4
 
 const unsigned char snake_body_link_map[16] = {0, 0, 1, 2, 0, 0, 3, 4, 4, 2, 5, 0, 3, 1, 0, 5};
 
@@ -36,7 +45,14 @@ typedef struct
 typedef struct
 {
     signed char x, y;
+    unsigned char big;
+    short time;
 } Food;
+
+typedef struct
+{
+    short num;
+} Time;
 
 typedef struct
 {
@@ -76,7 +92,7 @@ char *itoa(int value, char *str, int base)
         while (value != 0)
         {
             sum = value % base;
-            *str++ = sum > 9 ? (char)(sum - 10) + 'a' : (char)sum + '0';
+            *str++ = (sum > 9) ? (char)(sum - 10) + 'a' : (char)sum + '0';
             value /= base;
         }
 
@@ -91,16 +107,27 @@ char *itoa(int value, char *str, int base)
     return ret;
 }
 
-void score_init(Score *sc, char *str)
+void split_line_init()
 {
-    sc->num = 0;
-    sc->str = str;
+    draw_line(GAME_PIXEL_SIZE_X - 1, 0, GAME_PIXEL_SIZE_X - 1, GAME_PIXEL_SIZE_Y - 1, solid_line_one_func);
 }
 
 void score_update(Score *sc)
 {
     itoa((int)sc->num, sc->str, 10);
-    draw_string(SCORE_POS_X, SCORE_POS_Y, sc->str);
+    int i = 0, y = 0;
+    while (sc->str[i] != '\0')
+    {
+        draw_char(SCORE_POS_X, SCORE_POS_Y + y, sc->str[i++]);
+        y += 9;
+    }
+}
+
+void score_init(Score *sc, char *str)
+{
+    sc->num = 0;
+    sc->str = str;
+    score_update(sc);
 }
 
 unsigned char bitmap_get_bit(Bitmap *h, signed char x, signed char y)
@@ -120,9 +147,19 @@ void draw_grid_helper(signed char x, signed char y, unsigned char *grid)
     draw_grid((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
 }
 
+void draw_big_grid_helper(signed char x, signed char y, unsigned char *grid)
+{
+    draw_grid((int)x * GRID_SIZE + GRID_OFFSET_X - 1, (int)y * GRID_SIZE + GRID_OFFSET_Y - 1, GRID_SIZE + 2, GRID_SIZE + 2, grid);
+}
+
 void erase_grid(signed char x, signed char y)
 {
     draw_grid_helper(x, y, (unsigned char *)zero_grid);
+}
+
+void erase_big_grid(signed char x, signed char y)
+{
+    draw_big_grid_helper(x, y, (unsigned char *)zero_grid);
 }
 
 void draw_snake_head(signed char x, signed char y, unsigned char d)
@@ -140,9 +177,37 @@ void draw_snake_tail(signed char x, signed char y, unsigned char d)
     draw_grid_helper(x, y, (unsigned char *)tail_grid[d][(x ^ y) & 1]);
 }
 
-void draw_food(signed char x, signed char y)
+void draw_food(Food *f)
 {
-    draw_grid_helper(x, y, (unsigned char *)food_grid);
+    if (f->big)
+        draw_big_grid_helper(f->x, f->y, (unsigned char *)big_food_grid[f->time & 1]);
+    else
+        draw_grid_helper(f->x, f->y, (unsigned char *)food_grid[f->time & 1]);
+}
+
+void time_update(Time *t, short target_time)
+{
+    target_time = FOOD_MAX_TIME - target_time;
+    if (t->num <= target_time)
+        for (int i = t->num; i < target_time; i++)
+        {
+            draw_pixel(TIME_POS_X + 2, TIME_POS_Y - i - 3, 1);
+            draw_pixel(TIME_POS_X + 3, TIME_POS_Y - i - 3, 1);
+        }
+
+    else
+        for (int i = t->num; i > target_time; i--)
+        {
+            draw_pixel(TIME_POS_X + 2, TIME_POS_Y - i - 3, 0);
+            draw_pixel(TIME_POS_X + 3, TIME_POS_Y - i - 3, 0);
+        }
+    t->num = target_time;
+}
+
+void time_init(Time *t, short target_time)
+{
+    draw_rect(TIME_POS_X, TIME_POS_Y - (FOOD_MAX_TIME + 4), 5, FOOD_MAX_TIME + 3, solid_line_one_func);
+    time_update(t, target_time);
 }
 
 void snake_init(Snake *s, Bitmap *h, Queue *q, signed char x, signed char y, unsigned char d, char l)
@@ -157,32 +222,53 @@ void snake_init(Snake *s, Bitmap *h, Queue *q, signed char x, signed char y, uns
     bitmap_set_bit(h, x, y, 1);
 }
 
-signed char food_init(Food *f, Bitmap *h, unsigned char x, unsigned char y)
+signed char food_init(Food *f, Bitmap *h, Time *t, unsigned char x, unsigned char y, unsigned char big)
 {
     if (!bitmap_get_bit(h, x, y))
     {
         f->x = x;
         f->y = y;
+        f->big = big;
+        f->time = 0;
         bitmap_set_bit(h, f->x, f->y, 1);
-        draw_food(f->x, f->y);
+        draw_food(f);
+        time_update(t, f->time);
         return 1;
     }
     else
         return 0;
 }
 
-signed char food_rand_init(Food *f, Bitmap *h)
+signed char food_rand_init(Food *f, Bitmap *h, Time *t)
 {
     unsigned char x = (unsigned char)_random_number % GAME_SIZE_X;
     unsigned char y = (unsigned char)_random_number % GAME_SIZE_Y;
+    unsigned char b = ((unsigned char)_random_number & (FOOD_BIG_PROB - 1)) == 0;
     for (int i = 0; i < SNAKE_MAX_LENGTH; i++)
     {
-        if (food_init(f, h, x, y))
+        if (food_init(f, h, t, x, y, b))
             return 1;
         x = (x + i * ((GAME_SIZE_X / 2) + 1)) % GAME_SIZE_X;
         y = (y + i * ((GAME_SIZE_Y / 2) + 1)) % GAME_SIZE_Y;
     }
     return 0;
+}
+
+void food_update(Food *f, Bitmap *h, Time *t)
+{
+    f->time++;
+    if (f->big)
+    {
+        if (f->time > FOOD_MAX_TIME)
+        {
+            bitmap_set_bit(h, f->x, f->y, 0);
+            erase_big_grid(f->x, f->y);
+            food_rand_init(f, h, t);
+        }
+        else
+            time_update(t, f->time);
+    }
+    draw_food(f);
 }
 
 void bitmap_init(Bitmap *h) __attribute__((optimize("O0")));
@@ -268,30 +354,38 @@ void player_input(Snake *s)
         s->d = SNAKE_DEC_L;
 }
 
-signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc)
+signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc, Time *t)
 {
-    draw_snake_body(s->head_x, s->head_y, s->d, queue_peek_first(q));
+    char save_x = s->head_x, save_y = s->head_y;
     dec_to_pos(s->d, &s->head_x, &s->head_y);
     if (bitmap_get_bit(h, s->head_x, s->head_y))
     {
         if (s->head_x == f->x && s->head_y == f->y)
         {
-            s->food++;
-            food_rand_init(f, h);
+            if (f->big)
+            {
+                s->food += SNAKE_BIG_FOOD_SCORE;
+                sc->num += SNAKE_BIG_FOOD_SCORE;
+                erase_big_grid(f->x, f->y);
+            }
+            else
+            {
+                s->food += SNAKE_FOOD_SCORE;
+                sc->num += SNAKE_FOOD_SCORE;
+            }
+            score_update(sc);
+            food_rand_init(f, h, t);
         }
         else
-        {
             return 1;
-        }
     }
     bitmap_set_bit(h, s->head_x, s->head_y, 1);
+    draw_snake_body(save_x, save_y, s->d, queue_peek_first(q));
     queue_push(q, s->d);
     draw_snake_head(s->head_x, s->head_y, s->d);
     if (s->food > 0)
     {
         s->food--;
-        sc->num++;
-        score_update(sc);
     }
     else
     {
@@ -300,18 +394,23 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc)
         dec_to_pos(queue_pop(q), &s->tail_x, &s->tail_y);
     }
     draw_snake_tail(s->tail_x, s->tail_y, queue_peek_last(q));
+    food_update(f, h, t);
     return 0;
 }
 
 void game_end_fail()
 {
     draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Failure!");
+    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 50, 8, solid_line_zero_func);
+    draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
     display_refresh();
 }
 
 void game_end_victory()
 {
     draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Victory!");
+    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 50, 8, solid_line_zero_func);
+    draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
     display_refresh();
 }
 
@@ -322,22 +421,25 @@ int main()
     Snake snake;
     Food food;
     Score score;
+    Time time;
 
     char score_str[3] = {0};
 
     while (1)
     {
         display_clear();
+        split_line_init();
+        time_init(&time, 0);
         bitmap_init(&bitmap);
         queue_init(&queue);
         snake_init(&snake, &bitmap, &queue, GAME_SIZE_X / 2, GAME_SIZE_Y / 2, 0, SNAKE_INIT_LENGTH);
-        food_rand_init(&food, &bitmap);
+        food_rand_init(&food, &bitmap, &time);
         score_init(&score, score_str);
 
         while (1)
         {
             player_input(&snake);
-            if (update(&bitmap, &queue, &snake, &food, &score))
+            if (update(&bitmap, &queue, &snake, &food, &score, &time))
             {
                 game_end_fail();
                 break;

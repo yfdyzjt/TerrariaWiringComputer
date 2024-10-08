@@ -105,7 +105,7 @@ target("system")
         "-Os",
         "-march=rv32imc",
         "-mabi=ilp32",
-        "-nostdlib",
+        --"-nostdlib",
         "-Wall",
         "-fdata-sections",
         "-ffunction-sections",
@@ -121,7 +121,7 @@ target("system")
         "-Os",
         "-march=rv32imc",
         "-mabi=ilp32",
-        "-nostdlib",
+        --"-nostdlib",
         "-Wall",
         "-fdata-sections", 
         "-ffunction-sections",
@@ -137,10 +137,11 @@ target("system")
         "-static",
         "-march=rv32imc",
         "-mabi=ilp32",
-        "-nostdlib",
+        --"-nostdlib",
         "-Wl,--gc-sections",
         "-Wl,--strip-all",
-        "--specs=nosys.specs",
+        "--specs=nano.specs",       -- newlib-nano
+        "--specs=nosys.specs",      -- system call
         --"-flto",
         {force = true}
     )

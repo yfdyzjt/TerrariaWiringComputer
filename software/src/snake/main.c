@@ -206,6 +206,7 @@ void time_update(Time *t, short target_time)
 
 void time_init(Time *t, short target_time)
 {
+    t->num = 0;
     draw_rect(TIME_POS_X, TIME_POS_Y - (FOOD_MAX_TIME + 4), 5, FOOD_MAX_TIME + 3, solid_line_one_func);
     time_update(t, target_time);
 }
@@ -271,7 +272,7 @@ void food_update(Food *f, Bitmap *h, Time *t)
     draw_food(f);
 }
 
-void bitmap_init(Bitmap *h) __attribute__((optimize("O0")));
+// void bitmap_init(Bitmap *h) __attribute__((optimize("O0")));     // nostdlib
 void bitmap_init(Bitmap *h)
 {
     for (int i = 0; i < GAME_SIZE_X / 8; i++)
@@ -401,7 +402,7 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc, Time *t)
 void game_end_fail()
 {
     draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Failure!");
-    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 50, 8, solid_line_zero_func);
+    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 46, 8, solid_line_zero_func);
     draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
     display_refresh();
 }
@@ -409,7 +410,7 @@ void game_end_fail()
 void game_end_victory()
 {
     draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Victory!");
-    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 50, 8, solid_line_zero_func);
+    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 46, 8, solid_line_zero_func);
     draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
     display_refresh();
 }

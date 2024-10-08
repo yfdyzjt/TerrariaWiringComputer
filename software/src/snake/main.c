@@ -379,6 +379,7 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc, Time *t)
         else
             return 1;
     }
+    food_update(f, h, t);
     bitmap_set_bit(h, s->head_x, s->head_y, 1);
     draw_snake_body(save_x, save_y, s->d, queue_peek_first(q));
     queue_push(q, s->d);
@@ -394,7 +395,6 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc, Time *t)
         dec_to_pos(queue_pop(q), &s->tail_x, &s->tail_y);
     }
     draw_snake_tail(s->tail_x, s->tail_y, queue_peek_last(q));
-    food_update(f, h, t);
     return 0;
 }
 

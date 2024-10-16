@@ -20,7 +20,7 @@
 #define BRICK_BEGIN_Y 9
 #define BRICK_END_Y BRICK_BEGIN_Y + (BRICK_HEIGHT + 1) * BRICK_NUMBER_Y
 
-#define MAX_LIVES 3
+#define MAX_LIVES 6
 
 const fixed angle_table[PADDLE_ANGLE][2] = {
     {FLOAT_TO_FIXED(0.8660), FLOAT_TO_FIXED(0.5000)},
@@ -212,7 +212,7 @@ void draw_score()
 void draw_lives()
 {
     itoa(lives, lives_str, 10);
-    draw_string(6, 1, lives_str);
+    draw_string(7, 1, lives_str);
 }
 
 void init_game()

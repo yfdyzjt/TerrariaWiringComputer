@@ -16,9 +16,12 @@ void display_refresh()
 
 void draw_pixel(int x, int y, unsigned char pixel)
 {
-    unsigned char *addr = &_display_buffer[x / 8 + y * 16];
-    int offsetX = x % 8;
-    *addr = pixel ? *addr | (1 << offsetX) : *addr & ~(1 << offsetX);
+    if (x >= 0 && x < DISPLAY_SIZE_X && y >= 0 && y < DISPLAY_SIZE_Y)
+    {
+        unsigned char *addr = &_display_buffer[x / 8 + y * 16];
+        int offsetX = x % 8;
+        *addr = pixel ? *addr | (1 << offsetX) : *addr & ~(1 << offsetX);
+    }
 }
 
 int solid_line_one_func(int step, int x, int y)
@@ -78,20 +81,16 @@ void draw_rect(int x, int y, int w, int h, line_evolution_func evolve)
     draw_line(x + w, y, x + w, y + h, evolve);
 }
 
-void draw_grid(int x, int y, int sizeX, int sizeY, unsigned char *grid)
+void draw_grid_char(int x, int y, int w, int h, unsigned char *grid)
 {
     unsigned char *addr = &_display_buffer[x / 8 + y * 16];
 
-    int i;
+    int low = x % 8;
+    int high = low + w;
+    unsigned short date;
+    unsigned short mask = (unsigned short)(((1 << high) - 1) ^ ((1 << low) - 1));
 
-    int high, low;
-    unsigned short mask, date;
-
-    low = x % 8;
-    high = low + sizeX;
-    mask = (unsigned short)(((1 << high) - 1) ^ ((1 << low) - 1));
-
-    for (i = 0; i < sizeY; i++)
+    for (int i = 0; i < h; i++)
     {
         if (i + y < 0 && i + y >= DISPLAY_SIZE_Y)
             continue;
@@ -105,9 +104,40 @@ void draw_grid(int x, int y, int sizeX, int sizeY, unsigned char *grid)
     }
 }
 
+void draw_grid_short(int x, int y, int w, int h, unsigned short *grid)
+{
+    unsigned short *addr = (unsigned short *)&_display_buffer[x / 16 * 2 + y * 16];
+
+    int low = x % 16;
+    int high = low + w;
+
+    union
+    {
+        unsigned int i;
+        unsigned short s[2];
+    } u_date, u_mask;
+
+    u_mask.i = (unsigned int)(((1 << high) - 1) ^ ((1 << low) - 1));
+
+    for (int i = 0; i < h; i++)
+    {
+        if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
+            continue;
+
+        u_date.i = (unsigned int)((grid[i] << low) & u_mask.i);
+
+        if (x >= 0 && x < DISPLAY_SIZE_X)
+            *addr = (*addr & ~u_mask.s[0]) ^ u_date.s[0];
+        if (high >= 16 && x + 16 >= 0 && x + 16 < DISPLAY_SIZE_X)
+            *(addr + 1) = (*(addr + 1) & ~u_mask.s[1]) ^ u_date.s[1];
+
+        addr += 8;
+    }
+}
+
 void draw_char(int x, int y, char c)
 {
-    draw_grid(x, y, 5, 7, (unsigned char *)g57Ascii[c - 32]);
+    draw_grid_char(x, y, 5, 7, (unsigned char *)g57Ascii[c - 32]);
 }
 
 void draw_string(int x, int y, char *s)
@@ -116,6 +146,6 @@ void draw_string(int x, int y, char *s)
     while (s[i] != '\0')
     {
         x -= 6;
-        draw_grid(x, y, 6, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
+        draw_grid_char(x, y, 6, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
     }
 }

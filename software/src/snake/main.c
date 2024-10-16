@@ -144,12 +144,12 @@ void bitmap_set_bit(Bitmap *h, signed char x, signed char y, unsigned char b)
 
 void draw_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
+    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
 }
 
 void draw_big_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid((int)x * GRID_SIZE + GRID_OFFSET_X - 1, (int)y * GRID_SIZE + GRID_OFFSET_Y - 1, GRID_SIZE + 2, GRID_SIZE + 2, grid);
+    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X - 1, (int)y * GRID_SIZE + GRID_OFFSET_Y - 1, GRID_SIZE + 2, GRID_SIZE + 2, grid);
 }
 
 void erase_grid(signed char x, signed char y)
@@ -242,9 +242,9 @@ signed char food_init(Food *f, Bitmap *h, Time *t, unsigned char x, unsigned cha
 
 signed char food_rand_init(Food *f, Bitmap *h, Time *t)
 {
-    unsigned char x = (unsigned char)_random_number % GAME_SIZE_X;
-    unsigned char y = (unsigned char)_random_number % GAME_SIZE_Y;
-    unsigned char b = ((unsigned char)_random_number & (FOOD_BIG_PROB - 1)) == 0;
+    unsigned char x = rand.u8 % GAME_SIZE_X;
+    unsigned char y = rand.u8 % GAME_SIZE_Y;
+    unsigned char b = (rand.u8 & (FOOD_BIG_PROB - 1)) == 0;
     for (int i = 0; i < SNAKE_MAX_LENGTH; i++)
     {
         if (food_init(f, h, t, x, y, b))

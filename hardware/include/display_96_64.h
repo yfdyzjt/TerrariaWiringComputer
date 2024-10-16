@@ -18,7 +18,8 @@ void display_refresh();
 void draw_pixel(int x, int y, unsigned char pixel);
 void draw_line(int x0, int y0, int x1, int y1, line_evolution_func evolve);
 void draw_rect(int x, int y, int w, int h, line_evolution_func evolve);
-void draw_grid(int x, int y, int sizeX, int sizeY, unsigned char *grid);
+void draw_grid_char(int x, int y, int w, int h, unsigned char *grid);
+void draw_grid_short(int x, int y, int w, int h, unsigned short *grid);
 void draw_char(int x, int y, char c);
 void draw_string(int x, int y, char *s);
 

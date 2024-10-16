@@ -104,12 +104,12 @@ void draw_dotted_line()
 void init_ball(Ball *ball)
 {
 	ball->x = (DISPLAY_SIZE_X / 2) << 16;
-	ball->y = (_random_number % DISPLAY_SIZE_Y) << 16;
-	if (_random_number & 1)
-		ball->dx = angleMap[_random_number % 8][0];
+	ball->y = (rand.u32 % DISPLAY_SIZE_Y) << 16;
+	if (rand.u32 & 1)
+		ball->dx = angleMap[rand.u32 % 8][0];
 	else
-		ball->dx = -angleMap[_random_number % 8][0];
-	ball->dy = angleMap[_random_number % 8][1];
+		ball->dx = -angleMap[rand.u32 % 8][0];
+	ball->dy = angleMap[rand.u32 % 8][1];
 	ball->v = 1 << 16;
 	draw_ball(ball);
 }
@@ -215,7 +215,7 @@ int player_input()
 int ai_input(Ball *ball, Paddle *ai_paddle, int *ai_rand)
 {
 	if (get_abs(ai_paddle->x - ball->x) <= ball->dx)
-		*ai_rand = _random_number % PADDLE_HEIGHT;
+		*ai_rand = rand.u32 % PADDLE_HEIGHT;
 	if ((int)get_high_bits(ball->y) < (ai_paddle->y + *ai_rand))
 		return -1;
 	else if ((int)get_high_bits(ball->y) > (ai_paddle->y + *ai_rand))
@@ -249,7 +249,7 @@ int main()
 	Paddle left_paddle, right_paddle;
 	Score left_score, right_score;
 
-	int ai_rand = _random_number % PADDLE_HEIGHT;
+	int ai_rand = rand.u32 % PADDLE_HEIGHT;
 
 	while (1)
 	{
@@ -264,10 +264,10 @@ int main()
 
 		while (1)
 		{
+			update_ball(&ball, &left_paddle, &right_paddle, &left_score, &right_score);
+
 			move_paddle(&left_paddle, player_input());
 			move_paddle(&right_paddle, ai_input(&ball, &right_paddle, &ai_rand));
-
-			update_ball(&ball, &left_paddle, &right_paddle, &left_score, &right_score);
 
 			if (victory(&left_score, &right_score))
 				break;

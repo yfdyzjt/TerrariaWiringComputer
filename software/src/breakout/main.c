@@ -65,11 +65,6 @@ int hit_ball;
 char score_str[3];
 char lives_str[3];
 
-int sign(int value)
-{
-    return value >= 0 ? 1 : -1;
-}
-
 char *itoa(int value, char *str, int base)
 {
     char *ret = str;
@@ -187,7 +182,7 @@ void init_ball(fixed x, fixed y, fixed dx, fixed dy, fixed v)
 
 void init_rand_ball()
 {
-    init_ball(FLOAT_TO_FIXED(paddle.x + rand.u32 % paddle.width),
+    init_ball(FLOAT_TO_FIXED(paddle.x + rand.u32 % (paddle.width - 4) + 2),
               FLOAT_TO_FIXED(DISPLAY_SIZE_Y - 7),
               FLOAT_TO_FIXED(0),
               FLOAT_TO_FIXED(1),
@@ -234,91 +229,97 @@ void init_game()
 
 void update_ball()
 {
-    erase_ball();
-
     fixed v = ball.v;
     while (v > 0)
     {
+        erase_ball();
+
         ball.x += FIXED_MUL(ball.dx, v >= FLOAT_TO_FIXED(1) ? FLOAT_TO_FIXED(1) : v);
         ball.y += FIXED_MUL(ball.dy, v >= FLOAT_TO_FIXED(1) ? FLOAT_TO_FIXED(1) : v);
         v -= FLOAT_TO_FIXED(1);
-        if (v < 0)
-            break;
-
-        if (FIXED_TO_INT(ball.x) <= 0 || FIXED_TO_INT(ball.x) >= DISPLAY_SIZE_X - 1)
-            ball.dx = -ball.dx;
-
-        if (FIXED_TO_INT(ball.y) <= 0)
+        if (v >= 0)
         {
-            ball.dy = -ball.dy;
-            ball.y = 0 - ball.y + FLOAT_TO_FIXED(1);
-
-            if (paddle.width == PADDLE_WIDTH)
+            if (FIXED_TO_INT(ball.x) < 0)
             {
-                erase_paddle();
-                paddle.width /= 2;
-                paddle.x += PADDLE_WIDTH / 4;
-                draw_paddle();
+                ball.dx = -ball.dx;
+                ball.x = 0 - ball.x + FLOAT_TO_FIXED(1);
             }
-        }
-        else if (FIXED_TO_INT(ball.y) >= DISPLAY_SIZE_Y)
-        {
-            lives--;
-            draw_lives();
-
-            if (lives > 0)
-                init_rand_ball();
-
-            return;
-        }
-
-        if (FIXED_TO_INT(ball.y) >= paddle.y &&
-            FIXED_TO_INT(ball.y) < paddle.y + PADDLE_HEIGHT &&
-            FIXED_TO_INT(ball.x) >= paddle.x &&
-            FIXED_TO_INT(ball.x) < paddle.x + paddle.width)
-        {
-            int hit_area = (FIXED_TO_INT(ball.x) - paddle.x) / (paddle.width / (PADDLE_ANGLE * 2));
-            ball.y = FLOAT_TO_FIXED(paddle.y << 1) - ball.y - FLOAT_TO_FIXED(1);
-            if (hit_area >= PADDLE_ANGLE)
+            else if (FIXED_TO_INT(ball.x) >= DISPLAY_SIZE_X)
             {
-                hit_area = (PADDLE_ANGLE * 2 - 1) - hit_area;
-                ball.dx = angle_table[hit_area][0];
-                ball.dy = -angle_table[hit_area][1];
-            }
-            else
-            {
-                ball.dx = -angle_table[hit_area][0];
-                ball.dy = -angle_table[hit_area][1];
+                ball.dx = -ball.dx;
+                ball.x = FLOAT_TO_FIXED(DISPLAY_SIZE_X << 1) - ball.x - FLOAT_TO_FIXED(1);
             }
 
-            hit_ball++;
-            if (hit_ball == 4 || hit_ball == 12)
-                ball.v = FIXED_MUL(ball.v, BALL_VELOCITY_FACTOR);
+            if (FIXED_TO_INT(ball.y) < 0)
+            {
+                ball.dy = -ball.dy;
+                ball.y = 0 - ball.y + FLOAT_TO_FIXED(1);
+
+                if (paddle.width == PADDLE_WIDTH)
+                {
+                    erase_paddle();
+                    paddle.width /= 2;
+                    paddle.x += PADDLE_WIDTH / 4;
+                    draw_paddle();
+                }
+            }
+            else if (FIXED_TO_INT(ball.y) >= DISPLAY_SIZE_Y)
+            {
+                lives--;
+                draw_lives();
+
+                if (lives > 0)
+                    init_rand_ball();
+
+                return;
+            }
+
+            if (FIXED_TO_INT(ball.y) >= paddle.y &&
+                FIXED_TO_INT(ball.y) < paddle.y + PADDLE_HEIGHT &&
+                FIXED_TO_INT(ball.x) >= paddle.x &&
+                FIXED_TO_INT(ball.x) < paddle.x + paddle.width)
+            {
+                int hit_area = (FIXED_TO_INT(ball.x) - paddle.x) / (paddle.width / (PADDLE_ANGLE * 2));
+                ball.y = FLOAT_TO_FIXED(paddle.y << 1) - ball.y - FLOAT_TO_FIXED(1);
+                if (hit_area >= PADDLE_ANGLE)
+                {
+                    hit_area = (PADDLE_ANGLE * 2 - 1) - hit_area;
+                    ball.dx = angle_table[hit_area][0];
+                    ball.dy = -angle_table[hit_area][1];
+                }
+                else
+                {
+                    ball.dx = -angle_table[hit_area][0];
+                    ball.dy = -angle_table[hit_area][1];
+                }
+
+                hit_ball++;
+                if (hit_ball == 4 || hit_ball == 12)
+                    ball.v = FIXED_MUL(ball.v, BALL_VELOCITY_FACTOR);
+            }
+
+            if (FIXED_TO_INT(ball.y) >= BRICK_BEGIN_Y &&
+                FIXED_TO_INT(ball.y) < BRICK_END_Y &&
+                FIXED_TO_INT(ball.x) % 5 != 0 &&
+                FIXED_TO_INT(ball.y) % 3 != 0 &&
+                bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].active != 0)
+            {
+                bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].active = 0;
+                erase_brick(FIXED_TO_INT(ball.x) / 5, (FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3);
+
+                score += bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].score;
+                draw_score();
+
+                ball.dy = -ball.dy;
+
+                if ((FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3 >= BRICK_NUMBER_Y / 2)
+                    ball.v = FIXED_MUL(ball.v, BALL_VELOCITY_FACTOR);
+            }
         }
 
-        if (FIXED_TO_INT(ball.y) >= BRICK_BEGIN_Y &&
-            FIXED_TO_INT(ball.y) < BRICK_END_Y &&
-            FIXED_TO_INT(ball.x) % 5 != 0 &&
-            FIXED_TO_INT(ball.y) % 3 != 0 &&
-            bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].active != 0)
-        {
-            bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].active = 0;
-            erase_brick(FIXED_TO_INT(ball.x) / 5, (FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3);
-
-            score += bricks[FIXED_TO_INT(ball.x) / 5][(FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3].score;
-            draw_score();
-
-            int random_sign = rand.u8 & 1 ? 1 : -1;
-            unsigned char random_angle = rand.u8 % PADDLE_ANGLE;
-            ball.dx = random_sign * sign(ball.dx) * angle_table[random_angle][0];
-            ball.dy = -random_sign * sign(ball.dy) * angle_table[random_angle][1];
-
-            if ((FIXED_TO_INT(ball.y) - BRICK_BEGIN_Y) / 3 >= BRICK_NUMBER_Y / 2)
-                ball.v = FIXED_MUL(ball.v, BALL_VELOCITY_FACTOR);
-        }
+        draw_ball();
+        display_refresh();
     }
-
-    draw_ball();
 }
 
 void move_paddle()
@@ -355,10 +356,9 @@ int main()
         {
             move_paddle();
             update_ball();
-
-            display_refresh();
         }
 
+        display_refresh();
         driver_off();
     }
     return 0;

@@ -59,10 +59,11 @@ target("system")
 
         add_includedirs("hardware/include")
         add_includedirs("software/include")
+        add_files("hardware/lib/**.c")
+        -- add_files("software/lib/**.c")
+
         add_files("hardware/entry/start.s")
         add_files("hardware/entry/reset.c")
-        add_files("hardware/lib/*.c")
-        -- add_files("software/lib/*.c")
 
         add_includedirs("software/src/" .. software)  
         add_files("software/src/" .. software .. "/**.c")
@@ -75,8 +76,9 @@ target("system")
                 import("hardware.module.linkscript")
 
                 local link_parts = {}
-
-                parts, link_parts = part(target:sourcefiles(), target:objectfiles(), target:get("includedirs"), bin_dir, cpu, driver, ram)
+                parts, link_parts = part(os.files("software/src/" .. software .. "/**.c"), 
+                                         target:objectfiles(), target:get("includedirs"), 
+                                         bin_dir, cpu, driver, ram)
                 
                 io.writefile("./system/" .. software .. "_link.ld", linkscript(link_parts))
                 io.save("./system/" .. software .. "_part.lua", parts)

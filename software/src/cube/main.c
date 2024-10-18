@@ -1,19 +1,12 @@
-#include "display_96_64.h"
+#define FIXED_POINT_SHIFT 24
 
+#include "display_96_64.h"
 #include "cos_table.h"
 #include "sin_table.h"
+#include "fixed_number.h"
 
-#define FIXED_POINT_SHIFT 24
 #define DISPLAY_CENTER_X (DISPLAY_SIZE_X / 2)
 #define DISPLAY_CENTER_Y (DISPLAY_SIZE_Y / 2)
-
-typedef int fixed;
-
-#define FIXED_MUL(a, b) ((fixed)(((long long)(a) * (b)) >> FIXED_POINT_SHIFT))
-#define FIXED_DIV(a, b) ((fixed)(((long long)(a) << FIXED_POINT_SHIFT) / (b)))
-
-#define FLOAT_TO_FIXED(x) ((fixed)((x) * (1 << FIXED_POINT_SHIFT)))
-#define FIXED_TO_INT(x) ((x) >> FIXED_POINT_SHIFT)
 
 fixed fixed_sin(int angle)
 {

@@ -88,7 +88,8 @@ local function _parse_size(size_str)
     local unit = size_str:match("%a")
 
     if not num then
-        error("Invalid size format")
+        print("Invalid size format")
+        error()
     end
 
     if unit == "K" then
@@ -192,7 +193,7 @@ function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ra
     -- print(string.format("rodata size: %d bytes", rodata_size))
     -- print(string.format("data size: %d bytes", data_size))
 
-    if data_size > target_data_size then error("ram cannot hold data.") end
+    if data_size > target_data_size then print("ram cannot hold data.") error() end
     text_parts, origin = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", text_size, origin)
     if have_data_rom then rodata_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", rodata_size, origin) end
     data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", target_data_size, origin)

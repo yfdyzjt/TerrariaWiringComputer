@@ -1,14 +1,9 @@
-#include "display_96_64.h"
-
 #define FIXED_POINT_SHIFT 24
+
+#include "display_96_64.h"
+#include "fixed_number.h"
+
 #define MAX_ITER 100
-
-typedef int fixed;
-
-#define FIXED_MUL(a, b) ((fixed)(((long long)(a) * (b)) >> FIXED_POINT_SHIFT))
-#define FIXED_DIV(a, b) ((fixed)(((long long)(a) << FIXED_POINT_SHIFT) / (b)))
-
-#define FLOAT_TO_FIXED(x) ((fixed)((x) * (1 << FIXED_POINT_SHIFT)))
 
 void draw_julia(fixed c_real, fixed c_imag)
 {

@@ -42,13 +42,13 @@ void ant_move(Ant *ant)
         ant->y -= 1;
         break;
     case R:
-        ant->x += 1;
+        ant->x -= 1;
         break;
     case D:
         ant->y += 1;
         break;
     case L:
-        ant->x -= 1;
+        ant->x += 1;
         break;
     }
 }

@@ -81,32 +81,40 @@ void draw_rect(int x, int y, int w, int h, line_evolution_func evolve)
     draw_line(x + w, y, x + w, y + h, evolve);
 }
 
-void draw_grid_char(int x, int y, int w, int h, unsigned char *grid)
+void draw_grid_char(int x, int y, int w, int h, const unsigned char *grid)
 {
     unsigned char *addr = &_display_buffer[x / 8 + y * 16];
 
     int low = x % 8;
     int high = low + w;
-    unsigned short date;
-    unsigned short mask = (unsigned short)(((1 << high) - 1) ^ ((1 << low) - 1));
+
+    union
+    {
+        unsigned short s;
+        unsigned char c[2];
+    } u_date, u_mask;
+
+    u_mask.s = ((1 << high) - 1) ^ ((1 << low) - 1);
 
     for (int i = 0; i < h; i++)
     {
-        if (i + y < 0 && i + y >= DISPLAY_SIZE_Y)
+        if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
             continue;
-        date = (unsigned short)((grid[i] << low) & mask);
+
+        u_date.s = (unsigned short)((grid[i] << low) & u_mask.s);
 
         if (x >= 0 && x < DISPLAY_SIZE_X)
-            *addr = (*addr & ~*((unsigned char *)&mask)) ^ *((unsigned char *)&date);
+            *addr = (*addr & ~u_mask.c[0]) ^ u_date.c[0];
         if (high >= 8 && x + 8 >= 0 && x + 8 < DISPLAY_SIZE_X)
-            *(addr + 1) = (*(addr + 1) & ~*((unsigned char *)&mask + 1)) ^ *((unsigned char *)&date + 1);
+            *(addr + 1) = (*(addr + 1) & ~u_mask.c[1]) ^ u_date.c[1];
+
         addr += 16;
     }
 }
 
-void draw_grid_short(int x, int y, int w, int h, unsigned short *grid)
+void draw_grid_short(int x, int y, int w, int h, const unsigned short *grid)
 {
-    unsigned short *addr = (unsigned short *)&_display_buffer[x / 16 * 2 + y * 16];
+    unsigned short *addr = (unsigned short *)&_display_buffer[(x / 16) * 2 + y * 16];
 
     int low = x % 16;
     int high = low + w;
@@ -117,7 +125,7 @@ void draw_grid_short(int x, int y, int w, int h, unsigned short *grid)
         unsigned short s[2];
     } u_date, u_mask;
 
-    u_mask.i = (unsigned int)(((1 << high) - 1) ^ ((1 << low) - 1));
+    u_mask.i = ((1 << high) - 1) ^ ((1 << low) - 1);
 
     for (int i = 0; i < h; i++)
     {
@@ -132,6 +140,37 @@ void draw_grid_short(int x, int y, int w, int h, unsigned short *grid)
             *(addr + 1) = (*(addr + 1) & ~u_mask.s[1]) ^ u_date.s[1];
 
         addr += 8;
+    }
+}
+
+void draw_grid_int(int x, int y, int w, int h, const unsigned int *grid)
+{
+    unsigned int *addr = (unsigned int *)&_display_buffer[(x / 32) * 4 + y * 16];
+
+    int low = x % 32;
+    int high = low + w;
+
+    union
+    {
+        unsigned long long l;
+        unsigned int i[2];
+    } u_date, u_mask;
+
+    u_mask.l = ((1ULL << high) - 1) ^ ((1ULL << low) - 1);
+
+    for (int i = 0; i < h; i++)
+    {
+        if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
+            continue;
+
+        u_date.l = ((unsigned long long)grid[i] << low) & u_mask.l;
+
+        if (x >= 0 && x < DISPLAY_SIZE_X)
+            *addr = (*addr & ~u_mask.i[0]) ^ u_date.i[0];
+        if (high >= 32 && x + 32 >= 0 && x + 32 < DISPLAY_SIZE_X)
+            *(addr + 1) = (*(addr + 1) & ~u_mask.i[1]) ^ u_date.i[1];
+
+        addr += 4;
     }
 }
 

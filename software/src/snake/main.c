@@ -144,12 +144,12 @@ void bitmap_set_bit(Bitmap *h, signed char x, signed char y, unsigned char b)
 
 void draw_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
+    draw_grid_char((int)x * BOARD_SIZE + GRID_OFFSET_X, (int)y * BOARD_SIZE + GRID_OFFSET_Y, BOARD_SIZE, BOARD_SIZE, grid);
 }
 
 void draw_big_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X - 1, (int)y * GRID_SIZE + GRID_OFFSET_Y - 1, GRID_SIZE + 2, GRID_SIZE + 2, grid);
+    draw_grid_char((int)x * BOARD_SIZE + GRID_OFFSET_X - 1, (int)y * BOARD_SIZE + GRID_OFFSET_Y - 1, BOARD_SIZE + 2, BOARD_SIZE + 2, grid);
 }
 
 void erase_grid(signed char x, signed char y)

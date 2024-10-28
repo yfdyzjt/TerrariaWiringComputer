@@ -53,8 +53,8 @@ int main()
                 display_update();
                 if (game_over_check())
                 {
-                    draw_grid_int(DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y / 2, 32, 9, game_over_grid[0]);
-                    draw_grid_int(DISPLAY_SIZE_X / 2 - 32, DISPLAY_SIZE_Y / 2, 32, 9, game_over_grid[1]);
+                    draw_grid_int(DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y / 2 - 4, 32, 9, game_over_grid[0]);
+                    draw_grid_int(DISPLAY_SIZE_X / 2 - 32, DISPLAY_SIZE_Y / 2 - 4, 32, 9, game_over_grid[1]);
                     display_refresh();
                     break;
                 }

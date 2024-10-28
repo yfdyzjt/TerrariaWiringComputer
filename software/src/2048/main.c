@@ -13,6 +13,8 @@
 #define SCORE_STR_Y 0
 #define SCORE_NUM_X DISPLAY_SIZE_X
 #define SCORE_NUM_Y 8
+#define GAME_OVER_STR_X SCORE_STR_X
+#define GAME_OVER_STR_Y (DISPLAY_SIZE_Y - 16)
 
 signed char board[BOARD_SIZE][BOARD_SIZE];
 unsigned int score;
@@ -53,8 +55,8 @@ int main()
                 display_update();
                 if (game_over_check())
                 {
-                    draw_grid_int(DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y / 2 - 4, 32, 9, game_over_grid[0]);
-                    draw_grid_int(DISPLAY_SIZE_X / 2 - 32, DISPLAY_SIZE_Y / 2 - 4, 32, 9, game_over_grid[1]);
+                    draw_grid_int(GAME_OVER_STR_X, GAME_OVER_STR_Y, 30, 7, game_over_grid[0]);
+                    draw_grid_int(GAME_OVER_STR_X, GAME_OVER_STR_Y + 8, 30, 7, game_over_grid[1]);
                     display_refresh();
                     break;
                 }

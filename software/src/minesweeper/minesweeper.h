@@ -1,5 +1,5 @@
-#ifndef MINESWEEPER_GRID
-#define MINESWEEPER_GRID
+#ifndef MINESWEEPER
+#define MINESWEEPER
 
 #define GRID_WIDTH 7
 #define GRID_HEIGHT 7

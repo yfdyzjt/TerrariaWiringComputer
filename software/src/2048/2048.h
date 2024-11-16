@@ -1,5 +1,5 @@
-#ifndef G2048_GRID
-#define G2048_GRID
+#ifndef G2048
+#define G2048
 
 #define GRID_SIZE 15
 

@@ -3,7 +3,7 @@
 #include "five_way_motion_sensor.h"
 #include "driver.h"
 
-#include "snake_grid.h"
+#include "snake.h"
 
 #define GRID_SIZE 5
 #define GRID_OFFSET_X 2
@@ -118,7 +118,7 @@ void score_update(Score *sc)
     int i = 0, y = 0;
     while (sc->str[i] != '\0')
     {
-        draw_char(SCORE_POS_X, SCORE_POS_Y + y, sc->str[i++]);
+        draw_grid_char(SCORE_POS_X, SCORE_POS_Y + y, 5, 7, number_grid[sc->str[i++] - '0']);
         y += 9;
     }
 }
@@ -144,12 +144,12 @@ void bitmap_set_bit(Bitmap *h, signed char x, signed char y, unsigned char b)
 
 void draw_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid_char((int)x * BOARD_SIZE + GRID_OFFSET_X, (int)y * BOARD_SIZE + GRID_OFFSET_Y, BOARD_SIZE, BOARD_SIZE, grid);
+    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X, (int)y * GRID_SIZE + GRID_OFFSET_Y, GRID_SIZE, GRID_SIZE, grid);
 }
 
 void draw_big_grid_helper(signed char x, signed char y, unsigned char *grid)
 {
-    draw_grid_char((int)x * BOARD_SIZE + GRID_OFFSET_X - 1, (int)y * BOARD_SIZE + GRID_OFFSET_Y - 1, BOARD_SIZE + 2, BOARD_SIZE + 2, grid);
+    draw_grid_char((int)x * GRID_SIZE + GRID_OFFSET_X - 1, (int)y * GRID_SIZE + GRID_OFFSET_Y - 1, GRID_SIZE + 2, GRID_SIZE + 2, grid);
 }
 
 void erase_grid(signed char x, signed char y)
@@ -401,17 +401,15 @@ signed char update(Bitmap *h, Queue *q, Snake *s, Food *f, Score *sc, Time *t)
 
 void game_end_fail()
 {
-    draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Failure!");
-    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 46, 8, solid_line_zero_func);
-    draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
+    draw_grid_int(DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y / 2 - 5, 28, 11, game_over_grid[0]);
+    draw_grid_int(DISPLAY_SIZE_X / 2 - 28, DISPLAY_SIZE_Y / 2 - 5, 28, 11, game_over_grid[1]);
     display_refresh();
 }
 
 void game_end_victory()
 {
-    draw_string(DISPLAY_SIZE_X / 2 + 24, DISPLAY_SIZE_Y / 2 - 4, "Victory!");
-    draw_rect(DISPLAY_SIZE_X / 2 - 23, DISPLAY_SIZE_Y / 2 - 5, 46, 8, solid_line_zero_func);
-    draw_rect(DISPLAY_SIZE_X / 2 - 24, DISPLAY_SIZE_Y / 2 - 6, 48, 10, solid_line_one_func);
+    draw_grid_int(DISPLAY_SIZE_X / 2, DISPLAY_SIZE_Y / 2 - 5, 28, 11, your_win_grid[0]);
+    draw_grid_int(DISPLAY_SIZE_X / 2 - 28, DISPLAY_SIZE_Y / 2 - 5, 28, 11, your_win_grid[1]);
     display_refresh();
 }
 

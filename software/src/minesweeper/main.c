@@ -3,7 +3,7 @@
 #include "random_number_generator.h"
 #include "timer.h"
 
-#include "minesweeper_grid.h"
+#include "minesweeper.h"
 
 #define BUTTON_X (GRID_WIDTH + 1)
 

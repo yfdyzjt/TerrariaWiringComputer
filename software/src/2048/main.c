@@ -5,7 +5,7 @@
 #include "random_number_generator.h"
 #include "driver.h"
 
-#include "2048_grid.h"
+#include "2048.h"
 
 #define BOARD_SIZE 4
 

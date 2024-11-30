@@ -92,23 +92,21 @@ void draw_grid_char(int x, int y, int w, int h, const unsigned char *grid)
     {
         unsigned short s;
         unsigned char c[2];
-    } u_date, u_mask;
+    } u_data, u_mask;
 
     u_mask.s = ((1 << high) - 1) ^ ((1 << low) - 1);
 
-    for (int i = 0; i < h; i++)
+    for (int i = 0; i < h; i++, addr += 16)
     {
         if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
             continue;
 
-        u_date.s = (unsigned short)((grid[i] << low) & u_mask.s);
+        u_data.s = (unsigned short)((grid[i] << low) & u_mask.s);
 
         if (x >= 0 && x < DISPLAY_SIZE_X)
-            *addr = (*addr & ~u_mask.c[0]) ^ u_date.c[0];
+            *addr = (*addr & ~u_mask.c[0]) ^ u_data.c[0];
         if (high >= 8 && x + 8 >= 0 && x + 8 < DISPLAY_SIZE_X)
-            *(addr + 1) = (*(addr + 1) & ~u_mask.c[1]) ^ u_date.c[1];
-
-        addr += 16;
+            *(addr + 1) = (*(addr + 1) & ~u_mask.c[1]) ^ u_data.c[1];
     }
 }
 
@@ -123,23 +121,21 @@ void draw_grid_short(int x, int y, int w, int h, const unsigned short *grid)
     {
         unsigned int i;
         unsigned short s[2];
-    } u_date, u_mask;
+    } u_data, u_mask;
 
     u_mask.i = ((1 << high) - 1) ^ ((1 << low) - 1);
 
-    for (int i = 0; i < h; i++)
+    for (int i = 0; i < h; i++, addr += 8)
     {
         if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
             continue;
 
-        u_date.i = (unsigned int)((grid[i] << low) & u_mask.i);
+        u_data.i = (unsigned int)((grid[i] << low) & u_mask.i);
 
         if (x >= 0 && x < DISPLAY_SIZE_X)
-            *addr = (*addr & ~u_mask.s[0]) ^ u_date.s[0];
+            *addr = (*addr & ~u_mask.s[0]) ^ u_data.s[0];
         if (high >= 16 && x + 16 >= 0 && x + 16 < DISPLAY_SIZE_X)
-            *(addr + 1) = (*(addr + 1) & ~u_mask.s[1]) ^ u_date.s[1];
-
-        addr += 8;
+            *(addr + 1) = (*(addr + 1) & ~u_mask.s[1]) ^ u_data.s[1];
     }
 }
 
@@ -154,23 +150,21 @@ void draw_grid_int(int x, int y, int w, int h, const unsigned int *grid)
     {
         unsigned long long l;
         unsigned int i[2];
-    } u_date, u_mask;
+    } u_data, u_mask;
 
     u_mask.l = ((1ULL << high) - 1) ^ ((1ULL << low) - 1);
 
-    for (int i = 0; i < h; i++)
+    for (int i = 0; i < h; i++, addr += 4)
     {
         if (i + y < 0 || i + y >= DISPLAY_SIZE_Y)
             continue;
 
-        u_date.l = ((unsigned long long)grid[i] << low) & u_mask.l;
+        u_data.l = ((unsigned long long)grid[i] << low) & u_mask.l;
 
         if (x >= 0 && x < DISPLAY_SIZE_X)
-            *addr = (*addr & ~u_mask.i[0]) ^ u_date.i[0];
+            *addr = (*addr & ~u_mask.i[0]) ^ u_data.i[0];
         if (high >= 32 && x + 32 >= 0 && x + 32 < DISPLAY_SIZE_X)
-            *(addr + 1) = (*(addr + 1) & ~u_mask.i[1]) ^ u_date.i[1];
-
-        addr += 4;
+            *(addr + 1) = (*(addr + 1) & ~u_mask.i[1]) ^ u_data.i[1];
     }
 }
 

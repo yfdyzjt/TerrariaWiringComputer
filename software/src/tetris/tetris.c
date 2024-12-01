@@ -14,7 +14,6 @@ void game_loop();
 
 int main()
 {
-
     while (1)
     {
         game_init();
@@ -59,5 +58,8 @@ void game_loop()
         drop_update();
 
         draw_refresh();
+
+        if (is_game_over)
+            break;
     }
 }

@@ -216,6 +216,7 @@ signed char matrix_tetromino_spawn(TetroType type)
             return 1;
         }
 
+    is_game_over = 1;
     return 0;
 }
 

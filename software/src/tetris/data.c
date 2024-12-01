@@ -13,6 +13,8 @@ unsigned short time_gap;
 unsigned int time_cur;
 unsigned int time_last;
 
+signed char is_game_over;
+
 void score_add(unsigned int value)
 {
     if (value != 0)
@@ -48,6 +50,8 @@ void data_init()
     score = 0;
     level = 1;
     lines = 0;
+
+    is_game_over = 0;
 
     draw_score();
     draw_level();

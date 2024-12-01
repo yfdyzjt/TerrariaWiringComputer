@@ -8,6 +8,8 @@ extern unsigned int lines;
 extern unsigned int time_cur;
 extern unsigned short time_gap;
 
+extern signed char is_game_over;
+
 void data_init();
 void time_init();
 void time_update();

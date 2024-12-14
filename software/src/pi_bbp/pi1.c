@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "display_96_64.h"
+#include "helper.h"
 
 /* uncomment the following line to use 'long long' integers */
 /* #define HAS_LONG_LONG */
@@ -266,29 +266,7 @@ int pi_bbp(int n)
 		sum = fmod(sum + (double)s / (double)av, 1.0);
 	}
 
-	return (int)(sum * 10);
-}
-
-int x = DISPLAY_SIZE_X - 6, y = 0;
-
-void output(char c)
-{
-	if (c != '\n')
-	{
-		draw_char(x, y, c);
-		display_refresh();
-		x -= 6;
-	}
-
-	if (x < 0 || c == '\n')
-	{
-		y += 8;
-		x = DISPLAY_SIZE_X - 6;
-	}
-	if (y >= DISPLAY_SIZE_Y)
-	{
-		y = 0;
-	}
+	return (int)(sum * 1e9);
 }
 
 int main(int argc, char *argv[])
@@ -301,10 +279,9 @@ int main(int argc, char *argv[])
 
 	while (1)
 	{
-		output((char)('0' + pi_bbp(n)));
-		if (n % 10 == 0)
-			output('\n');
-		n++;
+		output_num(pi_bbp(n));
+		n += 9;
 	}
+
 	return 0;
 }

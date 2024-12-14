@@ -1,15 +1,9 @@
-local function _deepcopy(orig)
-    local copy = {}
-    for key, value in pairs(orig) do
-        copy[key] = value
-    end
-    return copy
-end
-
-local function _convert_source_files(source_files, include_dirs)
+local function _get_include_files(source_files, include_dirs)
     local include_files = {}
+
     for _, source_file in ipairs(source_files) do
         local source_file_content = io.readfile(source_file)
+
         for include_file in source_file_content:gmatch('#include%s+"(.-)"') do
             for _, include_dir in ipairs(include_dirs) do
                 if os.isfile(include_dir .. "/" .. include_file) then
@@ -18,69 +12,52 @@ local function _convert_source_files(source_files, include_dirs)
                             goto match
                         end
                     end
+
                     table.insert(include_files, include_file)
                     :: match ::
                 end
             end
         end
     end
+
     return include_files
 end
 
-local function _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, data_size, have_input)
-    if section_name and section_size and section_size ~= 0 and section_type then
-        for _, include_file in ipairs(include_files) do
-            if section_name == include_file then
-                local io_part_name = section_name:gsub("%.h$", "")
-                local io_part = {}
-                io_part.name = io_part_name
-                io_part.file = io_part_name
-                io_part.section = section_name
-                io_part.memory = string.upper(io_part_name)
-                io_part.length = tonumber(section_size, 16)
-                io_part.rwx = section_type:gsub("A", "r"):gsub("W", "w"):gsub("X", "x"):gsub("[^rwx]", "")
-                if string.find(io_part.rwx, "w") then
-                    io_part.type = "output"
-                else
-                    io_part.type = "input"
-                    have_input = true
-                end
-                table.insert(io_parts, io_part)
-                -- print(string.format("include section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-                goto match
-            end
-        end
-        if string.find(section_type, "X") then
-            text_size = text_size + tonumber(section_size, 16)
-            -- print(string.format("text section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-        elseif string.find(section_type, "A") and not (string.find(section_type, "W") or string.find(section_type, "X")) then
-            rodata_size = rodata_size + tonumber(section_size, 16)
-            -- print(string.format("rodata section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-        elseif string.find(section_type, "A") and string.find(section_type, "W") and not string.find(section_type, "X") then
-            data_size = data_size + tonumber(section_size, 16)
-            -- print(string.format("data section: %s, size: 0x%s, type: %s", section_name, section_size, section_type))
-        end
-        :: match ::
-    end
-    return io_parts, text_size, rodata_size, data_size, have_input
-end
+local function _get_io_parts(object_files, include_files, sdk_program)
+    import("readelf")
 
-local function _convert_object_files(object_files, include_files, bin_dir)
-    local text_size = 0
-    local rodata_size = 0
-    local data_size = 0
-    local have_input = false
     local io_parts = {}
 
     for _, object_file in ipairs(object_files) do
-        local object_file_content = os.iorunv(bin_dir .. "riscv-none-elf-readelf", {"-S", "--wide", object_file})
-        for line in object_file_content:gmatch("[^\r\n]+") do
-            local section_name, section_size, section_type = line:match("%s+%[%s*%d+%]%s+([%p%w]+)%s+[%p%w]+%s+%x+%s+%x+%s+(%x+)%s+%x+%s+([%w]+)")
-            io_parts, text_size, rodata_size, data_size, have_input = _convert_section(include_files, section_name, section_size, section_type, io_parts, text_size, rodata_size, data_size, have_input)
+        local sections = readelf(sdk_program, object_file)
+
+        for _, section in ipairs(sections) do
+            for _, include_file in ipairs(include_files) do
+                if section.name == include_file then
+                    local io_part = {}
+                    local io_part_name = section.name:gsub("%.h$", "")
+
+                    io_part.name = io_part_name
+                    io_part.file = io_part_name
+                    io_part.section = section.name
+                    io_part.memory = string.upper(io_part_name)
+                    io_part.length = section.size
+                    io_part.rwx = section.type:gsub("A", "r"):gsub("W", "w"):gsub("X", "x"):gsub("[^rwx]", "")
+
+                    if string.find(io_part.rwx, "w") then
+                        io_part.type = "output"
+                    else
+                        io_part.type = "input"
+                    end
+
+                    table.insert(io_parts, io_part)
+                    -- print(string.format("include section: %s, size: 0x%s, type: %s", section.name, section.size, section.type))
+                end
+            end
         end
     end
 
-    return io_parts, text_size, rodata_size, data_size, have_input
+    return io_parts
 end
 
 local function _parse_size(size_str)
@@ -101,8 +78,27 @@ local function _parse_size(size_str)
     end
 end
 
+local function _assign_mem_addr(parts, origin)
+    local origin_step = 64 << 10
+
+    for i, part in ipairs(parts) do
+        part.origin = origin
+        origin = origin + math.ceil(part.length / origin_step) * origin_step
+    end
+
+    return origin
+end
+
 local function _sort_by_length_asc(a, b)
     return a.length < b.length
+end
+
+local function _deepcopy(orig)
+    local copy = {}
+    for key, value in pairs(orig) do
+        copy[key] = value
+    end
+    return copy
 end
 
 local function _rename_part(part, name_counter)
@@ -116,18 +112,10 @@ local function _rename_part(part, name_counter)
     return copy_part
 end
 
-local function _assign_mem_addr(parts, origin)
-    local origin_step = 64 << 10
-    for i, part in ipairs(parts) do
-        part.origin = origin
-        origin = origin + math.ceil(part.length / origin_step) * origin_step
-    end
-    return origin
-end
-
-local function _get_mem_parts(dir, prefix, type, rwx, target_length, origin)
+local function _get_mem_parts(dir, prefix, type, rwx, target_length)
     local mem_files = os.files(dir .. "/" .. prefix .. "_*.TEditSch")
     local mem_parts = {}
+
     for _, mem_file in ipairs(mem_files) do
         local name = path.filename(mem_file):gsub("%.TEditSch", "")
         local size = name:match("_(%d+[KM]?)B")
@@ -151,66 +139,52 @@ local function _get_mem_parts(dir, prefix, type, rwx, target_length, origin)
         end
     end
 
-    origin = _assign_mem_addr(parts, origin)
+    return parts
+end
 
+local function _get_ins_mem(size, origin)
+    local parts = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", size)
+    local origin = _assign_mem_addr(parts, origin)
     return parts, origin
 end
 
-local function _combine_parts(as, bs)
-    for _, b in ipairs(bs) do
-        table.insert(as, b)
-    end
+local function _get_rodata_mem(size, origin)
+    local parts = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", size)
+    local origin = _assign_mem_addr(parts, origin)
+    return parts, origin
 end
 
-local function _link_parts(memory, parts)
-    if parts[1] then
-        local length = 0
-        for _, part in ipairs(parts) do
-            length = length + part.length
-        end
-        return {memory = memory, rwx = parts[1].rwx, origin = parts[1].origin, length = length}
-    else
-        return {}
-    end
+local function _get_data_mem(size, origin)
+    local parts = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", size)
+    local origin = _assign_mem_addr(parts, origin)
+    return parts, origin
 end
 
-function main(source_files, object_files, include_dirs, bin_dir, cpu, driver, ram)
-    local parts = {}
-    local link_parts = {}
+local function _get_io_mem(object_files, include_files, sdk_program, origin)
+    local parts = _get_io_parts(object_files, include_files, sdk_program)
+    local origin = _assign_mem_addr(parts, origin)
+    return parts, origin
+end
 
-    local origin = 0
+function main(target, size, config, sdk_program)
+    local source_files = os.files("software/src/" .. config.software .. "/**.c")
+    local object_files = target:objectfiles()
+    local include_files = _get_include_files(source_files, target:get("includedirs"))
+    local target_data_size = _parse_size(config.ram)
 
     local text_parts = {}
     local rodata_parts = {}
     local data_parts = {}
+    local io_parts = {}
 
-    local include_files = _convert_source_files(source_files, include_dirs)
-    local io_parts, text_size, rodata_size, data_size, have_input = _convert_object_files(object_files, include_files, bin_dir)
-    local target_data_size = _parse_size(ram)
-    local have_data_rom = rodata_size >= target_data_size / 2 and data_size < target_data_size / 2
+    local origin = 0
 
-    -- print(string.format("text size: %d bytes", text_size))
-    -- print(string.format("rodata size: %d bytes", rodata_size))
-    -- print(string.format("data size: %d bytes", data_size))
+    if size.data > target_data_size then print("ram cannot hold data.") error() end
+    text_parts, origin = _get_ins_mem(size.text, origin)
+    local have_data_rom = size.rodata >= target_data_size / 2 and size.data < target_data_size / 2
+    if have_data_rom then rodata_parts, origin = _get_rodata_mem(size.rodata, origin) end
+    data_parts, origin = _get_data_mem(target_data_size, origin)
+    io_parts, origin = _get_io_mem(object_files, include_files, sdk_program, origin)
 
-    if data_size > target_data_size then print("ram cannot hold data.") error() end
-    text_parts, origin = _get_mem_parts("hardware/wiring/memory/ins", "ins_rom", "mem_ins", "x", text_size, origin)
-    if have_data_rom then rodata_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_rom", "mem_data", "r", rodata_size, origin) end
-    data_parts, origin = _get_mem_parts("hardware/wiring/memory/data", "data_ram", "mem_data", "rw", target_data_size, origin)
-    origin = _assign_mem_addr(io_parts, origin)
-    
-    table.insert(link_parts, _link_parts("INS_ROM", text_parts))
-    if have_data_rom then table.insert(link_parts, _link_parts("DATA_ROM", rodata_parts)) end
-    table.insert(link_parts, _link_parts("DATA_RAM", data_parts))
-    _combine_parts(link_parts, io_parts)
-
-    table.insert(parts, {name = cpu, file = cpu, type = "cpu"})
-    _combine_parts(parts, text_parts)
-    if have_data_rom then _combine_parts(parts, rodata_parts) end
-    _combine_parts(parts, data_parts)
-    _combine_parts(parts, io_parts)
-    if not have_input then table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"}) end
-    table.insert(parts, {name = driver, file = driver, type = "driver"})
-
-    return parts, link_parts
+    return text_parts, rodata_parts, data_parts, io_parts
 end

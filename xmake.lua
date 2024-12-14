@@ -5,6 +5,7 @@ add_rules("mode.debug", "mode.release")
 
 local sdk_dir = "../xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content"
 local bin_dir = sdk_dir .. "/bin/"
+local sdk_program = bin_dir .. "riscv-none-elf-"
 
 toolchain("riscv-none-elf")
     set_kind("standalone")
@@ -43,19 +44,21 @@ target("system")
     add_options("ram")
     add_options("software")
 
-    local world = get_config("world")
-    local cpu = get_config("cpu")
-    local driver = get_config("driver")
-    local ram = get_config("ram")
-    local software = get_config("software")
+    local config = {}
 
-    if world and cpu and software then
+    config.world = get_config("world")
+    config.cpu = get_config("cpu")
+    config.driver = get_config("driver")
+    config.ram = get_config("ram")
+    config.software = get_config("software")
+
+    if config.world and config.software then
         local parts = {}
 
         set_kind("binary") 
 
         set_targetdir("system")
-        set_filename(software .. ".elf")
+        set_filename(config.software .. ".elf")
 
         add_includedirs("hardware/include")
         add_includedirs("software/include")
@@ -65,23 +68,33 @@ target("system")
         add_files("hardware/entry/start.s")
         add_files("hardware/entry/reset.c")
 
-        add_includedirs("software/src/" .. software)  
-        add_files("software/src/" .. software .. "/**.c")
+        add_includedirs("software/src/" .. config.software)  
+        add_files("software/src/" .. config.software .. "/**.c")
 
-        add_ldflags("-Wl,-T,./system/" .. software .. "_link.ld")
+        add_ldflags("-Wl,-T,./system/" .. config.software .. "_link.ld")
+
+        before_build(
+            function (target)
+                if not os.isdir("./system") then
+                    os.mkdir("./system")
+                end
+            end
+        )
 
         before_link(
             function (target)
+                import("hardware.module.targetsize")
                 import("hardware.module.part")
                 import("hardware.module.linkscript")
+                import("hardware.module.combiepart")
 
-                local link_parts = {}
-                parts, link_parts = part(os.files("software/src/" .. software .. "/**.c"), 
-                                         target:objectfiles(), target:get("includedirs"), 
-                                         bin_dir, cpu, driver, ram)
-                
-                io.writefile("./system/" .. software .. "_link.ld", linkscript(link_parts))
-                io.save("./system/" .. software .. "_part.lua", parts)
+                target_size = targetsize(target, sdk_program)
+                text_parts, rodata_parts, data_parts, io_parts = part(target, target_size, config, sdk_program)
+                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, config)
+                link_script = linkscript(mem_parts)
+
+                io.writefile("./system/" .. config.software .. "_link.ld", link_script)
+                io.save("./system/" .. config.software .. "_part.lua", parts)
             end
         )
     
@@ -89,9 +102,10 @@ target("system")
             function (target)
                 local target_file = target:targetfile()
                 local final_file = target_file:gsub("%.elf$", ".bin")
-                os.execv(bin_dir .. "riscv-none-elf-objcopy", {"-O", "binary", target_file, final_file})
-                os.execv(bin_dir .. "riscv-none-elf-size", {"-Ax", target_file})
-                os.exec("tmake do \"Include(self,\\\"./hardware/module/make.lua\\\").MakeWorld(\\\"" .. world .. "\\\",\\\"" .. software .. "\\\")\"")
+                
+                os.execv(sdk_program .. "objcopy", {"-O", "binary", target_file, final_file})
+                os.execv(sdk_program .. "size", {"-Ax", target_file})
+                os.exec("tmake do \"Include(self,\\\"./hardware/module/make.lua\\\").MakeWorld(\\\"" .. config.world .. "\\\",\\\"" .. config.software .. "\\\")\"")
             end
         )
         

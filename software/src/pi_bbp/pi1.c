@@ -282,6 +282,7 @@ int main(int argc, char *argv[])
 		output_num(pi_bbp(n));
 		output(' ');
 		output_num(n);
+		output('\n');
 		n += 9;
 	}
 

@@ -72,5 +72,4 @@ void output_num(int num)
     signed char l = itoa_l(num, str, 10);
     for (int i = 0; i < l; i++)
         output(str[i]);
-    output('\n');
 }

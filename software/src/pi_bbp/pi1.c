@@ -280,6 +280,8 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		output_num(pi_bbp(n));
+		output(' ');
+		output_num(n);
 		n += 9;
 	}
 

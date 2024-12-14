@@ -183,7 +183,7 @@ int next_prime(int n)
 		}                               \
 	}
 
-int pi(int n)
+int pi_bbp(int n)
 {
 	int av, a, vmax, N, num, den, k, kq1, kq2, kq3, kq4, t, v, s, i, t1;
 	double sum;
@@ -301,7 +301,7 @@ int main(int argc, char *argv[])
 
 	while (1)
 	{
-		output((char)('0' + pi(n)));
+		output((char)('0' + pi_bbp(n)));
 		if (n % 10 == 0)
 			output('\n');
 		n++;

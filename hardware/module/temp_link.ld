@@ -27,10 +27,12 @@ SECTIONS
 		*(.rodata .rodata.* .srodata .srodata.*);
 	} > RAM
 
+	end = .;
+
 	.io :
     {
         *(*.h);
     } > RAM
 
-	_stack_start = ORIGIN(RAM) + LENGTH(RAM);
+	_stack = ORIGIN(RAM) + LENGTH(RAM);
 }

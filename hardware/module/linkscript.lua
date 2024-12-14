@@ -39,6 +39,7 @@ function main(parts)
                     result = result .. "\t\t*(.rodata .rodata.* .srodata .srodata.*);\n"
                     result = result .. "\t} > " .. part.memory .. "\n"
                 end
+                result = result .. "\tend = .;\n"
             elseif part.memory == "DATA_ROM" then
                 result = result .. "\t.rodata :\n"
                 result = result .. "\t{\n"
@@ -52,7 +53,7 @@ function main(parts)
             end
         end
     end
-    result = result .. "\t_stack_start = ORIGIN(DATA_RAM) + LENGTH(DATA_RAM);\n"
+    result = result .. "\t_stack = ORIGIN(DATA_RAM) + LENGTH(DATA_RAM);\n"
     result = result .. "}\n"
     return result
 end

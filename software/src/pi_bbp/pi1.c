@@ -273,6 +273,9 @@ int main(int argc, char *argv[])
 {
 	int n = 1;
 
+	output('P');
+	output('I');
+	output('=');
 	output('3');
 	output('.');
 	output('\n');

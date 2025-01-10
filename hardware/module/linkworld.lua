@@ -43,7 +43,7 @@ function Link(world, parts)
     local range = 5
     local io_range = 15
 
-    local io_size_x = 350
+    local io_size_x = 359
     local io_size_y = 500
     local io_parts = {}
     for i = #parts, 1, -1 do

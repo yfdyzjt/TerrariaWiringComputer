@@ -285,6 +285,6 @@ extern volatile const unsigned char _keyboard_queue;
 extern volatile unsigned char *_keyboard_reset;
 
 void keyboard_init();
-char keyboard_scan();
+unsigned char keyboard_scan();
 
 #endif

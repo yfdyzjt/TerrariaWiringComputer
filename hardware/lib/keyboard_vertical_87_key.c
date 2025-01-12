@@ -215,7 +215,7 @@ void keyboard_init()
     *_keyboard_reset = 1;
 }
 
-char keyboard_scan()
+unsigned char keyboard_scan()
 {
     return kc_to_vkc[_keyboard_queue];
 }

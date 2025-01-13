@@ -90,6 +90,11 @@ void bitmap_init()
             bitmap.data[i][j] = 0;
 }
 
+unsigned char board_get(Point point)
+{
+    return (_display_buffer[point.x / 8 + point.y * 16] >> (point.x % 8)) & 1;
+}
+
 void board_set(Point point, unsigned char pixel)
 {
     draw_pixel(point.x, point.y, pixel);
@@ -155,7 +160,7 @@ void wall_get_path(Point wall, Point *path_1, Point *path_2)
     }
 }
 
-int main()
+void maze_generation()
 {
     bitmap_init();
     table_init();
@@ -181,6 +186,73 @@ int main()
             path_set(path_2);
             board_set(wall, 0);
         }
+    }
+}
+
+signed char move(Point *pos, Point d, unsigned char p)
+{
+    Point new_pos = {pos->x + d.x, pos->y + d.y};
+
+    if (new_pos.x < 0 || new_pos.y < 0 || new_pos.x >= MAZE_WIDTH * 2 || new_pos.y >= MAZE_HEIGHT * 2)
+        return 0;
+
+    Point wall = {pos->x + d.x / 2, pos->y + d.y / 2};
+
+    if (!board_get(wall))
+    {
+        board_set(*pos, 0);
+        board_set(new_pos, p);
+
+        pos->x += d.x;
+        pos->y += d.y;
+
+        return 1;
+    }
+    else
+        return 0;
+}
+
+void maze_move()
+{
+    Point pos = {0, 0};
+    Point end = {MAZE_WIDTH * 2 - 2, MAZE_HEIGHT * 2 - 2};
+
+    unsigned char p = 1;
+
+    while (1)
+    {
+        motion_sensor_refresh();
+        if (motion_sensor_r())
+            move(&pos, dirs[0], p);
+        else if (motion_sensor_d())
+            move(&pos, dirs[1], p);
+        else if (motion_sensor_l())
+            move(&pos, dirs[2], p);
+        else if (motion_sensor_u())
+            move(&pos, dirs[3], p);
+        else if (motion_sensor_j())
+        {
+            board_set(pos, 0);
+            pos.x = 0;
+            pos.y = 0;
+            board_set(pos, p);
+        }
+        else
+            board_set(pos, p);
+
+        p ^= 1;
+
+        if (pos.x == end.x && pos.y == end.y)
+            break;
+    }
+}
+
+int main()
+{
+    while (1)
+    {
+        maze_generation();
+        maze_move();
     }
 
     return 0;

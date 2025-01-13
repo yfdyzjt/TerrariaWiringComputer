@@ -1,5 +1,6 @@
 #include "display_96_64.h"
 #include "random_number_generator.h"
+#include "five_way_motion_sensor.h"
 
 #define MAZE_WIDTH (DISPLAY_SIZE_X / 2)
 #define MAZE_HEIGHT (DISPLAY_SIZE_Y / 2)

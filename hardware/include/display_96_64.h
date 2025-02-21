@@ -22,7 +22,7 @@ void draw_grid_char(int x, int y, int w, int h, const unsigned char *grid);
 void draw_grid_short(int x, int y, int w, int h, const unsigned short *grid);
 void draw_grid_int(int x, int y, int w, int h, const unsigned int *grid);
 void draw_char(int x, int y, char c);
-void draw_string(int x, int y, char *s);
+void draw_string(int x, int y, const char *s);
 
 int solid_line_zero_func(int step, int x, int y);
 int solid_line_one_func(int step, int x, int y);

@@ -170,15 +170,15 @@ void draw_grid_int(int x, int y, int w, int h, const unsigned int *grid)
 
 void draw_char(int x, int y, char c)
 {
-    draw_grid_char(x, y, 5, 7, (unsigned char *)g57Ascii[c - 32]);
+    draw_grid_char(x, y, CHARACTER_WIDTH, CHARACTER_HEIGHT, (unsigned char *)g57Ascii[c - 32]);
 }
 
-void draw_string(int x, int y, char *s)
+void draw_string(int x, int y, const char *s)
 {
     int i = 0;
     while (s[i] != '\0')
     {
-        x -= 6;
-        draw_grid_char(x, y, 6, 7, (unsigned char *)g57Ascii[s[i++] - 32]);
+        x -= (CHARACTER_WIDTH + 1);
+        draw_grid_char(x, y, (CHARACTER_WIDTH + 1), CHARACTER_HEIGHT, (unsigned char *)g57Ascii[s[i++] - 32]);
     }
 }

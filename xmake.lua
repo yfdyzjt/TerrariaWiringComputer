@@ -34,7 +34,7 @@ option("ram")
 option_end()
 
 option("software")
-    set_default("test")
+    set_default("helloworld")
 option_end()
 
 target("system")
@@ -104,7 +104,16 @@ target("system")
                 local final_file = target_file:gsub("%.elf$", ".bin")
                 
                 os.execv(sdk_program .. "objcopy", {"-O", "binary", target_file, final_file})
-                os.execv(sdk_program .. "size", {"-Ax", target_file})
+                -- os.execv(sdk_program .. "size", {"-Ad", target_file})
+
+                local result = os.iorunv(sdk_program .. "size", {"-Ad", target_file})
+                if result then
+                    result = result:gsub("(%s+)(%d+)(%s+)(%d+)", function(space1, size, space2, addr)
+                        return space1 .. size .. string.format("%9s", string.format("0x%x", tonumber(addr)))
+                    end)
+                    print(result)
+                end
+                
                 os.exec("tmake do \"Include(self,\\\"./hardware/module/make.lua\\\").MakeWorld(\\\"" .. config.world .. "\\\",\\\"" .. config.software .. "\\\")\"")
             end
         )
@@ -156,6 +165,7 @@ target("system")
         --"-nostdlib",
         "-Wl,--gc-sections",
         "-Wl,--strip-all",
+        "-Wl,-u,_printf_float",     -- float printf
         "--specs=nano.specs",       -- newlib-nano
         "--specs=nosys.specs",      -- system call
         --"-flto",

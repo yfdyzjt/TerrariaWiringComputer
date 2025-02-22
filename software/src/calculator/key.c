@@ -117,20 +117,20 @@ static ErrorType key_neg_press(KeyType key)
         if (allow_overwrite)
             overwrite_op_clear();
 
-        is_neg = !is_neg;
         *cur_opnd = -*cur_opnd;
+        is_neg = *cur_opnd < 0;
 
         if (allow_number)
         {
             if (is_neg)
             {
-                operand_erase_ps(1, 0);
-                result_erase_ps(1, 0);
+                operand_draw_ps("-", "");
+                result_draw_ps("-", "");
             }
             else
             {
-                operand_draw_ps("-", "");
-                result_draw_ps("-", "");
+                operand_erase_ps(1, 0);
+                result_erase_ps(1, 0);
             }
         }
         else

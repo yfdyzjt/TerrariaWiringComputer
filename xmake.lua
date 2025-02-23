@@ -162,12 +162,12 @@ target("system")
         "-static",
         "-march=rv32imc",
         "-mabi=ilp32",
-        --"-nostdlib",
+        --"-nostdlib",              -- no stdlib
         "-Wl,--gc-sections",
         "-Wl,--strip-all",
-        "-Wl,-u,_printf_float",     -- float printf
+        --"-Wl,-u,_printf_float",   -- float printf
         "--specs=nano.specs",       -- newlib-nano
-        "--specs=nosys.specs",      -- system call
+        "--specs=nosys.specs",      -- no system call
         --"-flto",
         {force = true}
     )

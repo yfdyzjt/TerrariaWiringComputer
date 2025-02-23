@@ -100,10 +100,10 @@
 volatile const unsigned char _keyboard_queue __attribute__((section("keyboard_vertical_87_key.h")));
 volatile unsigned char *_keyboard_reset = (volatile unsigned char *)&_keyboard_queue;
 
-static const char kc_to_vkc[128] = {
+static const VK_KEY kc_to_vkc[128] = {
     /* Line 1 */
     [K_00] = VK_ESCAPE,
-    [K_01] = 0,
+    [K_01] = VK_NONE,
     [K_02] = VK_F1,
     [K_03] = VK_F2,
     [K_04] = VK_F3,
@@ -169,8 +169,8 @@ static const char kc_to_vkc[128] = {
     [K_58] = VK_OEM_1,
     [K_59] = VK_OEM_7,
     [K_60] = VK_RETURN,
-    [K_61] = 0,
-    [K_62] = 0,
+    [K_61] = VK_NONE,
+    [K_62] = VK_NONE,
     [K_63] = VK_NEXT,
 
     /* Line 5 */
@@ -186,9 +186,9 @@ static const char kc_to_vkc[128] = {
     [K_73] = VK_OEM_PERIOD,
     [K_74] = VK_OEM_2,
     [K_75] = VK_RSHIFT,
-    [K_76] = 0,
+    [K_76] = VK_NONE,
     [K_77] = VK_UP,
-    [K_78] = 0,
+    [K_78] = VK_NONE,
     [K_79] = VK_PRIOR,
 
     /* Line 6 */
@@ -196,10 +196,10 @@ static const char kc_to_vkc[128] = {
     [K_81] = VK_LWIN,
     [K_82] = VK_LMENU,
     [K_83] = VK_SPACE,
-    [K_84] = 0,
-    [K_85] = 0,
-    [K_86] = 0,
-    [K_87] = 0,
+    [K_84] = VK_NONE,
+    [K_85] = VK_NONE,
+    [K_86] = VK_NONE,
+    [K_87] = VK_NONE,
     [K_88] = VK_RMENU,
     [K_89] = VK_RWIN,
     [K_90] = VK_RBUTTON,
@@ -215,7 +215,7 @@ void keyboard_init()
     *_keyboard_reset = 1;
 }
 
-unsigned char keyboard_scan()
+VK_KEY keyboard_scan()
 {
     return kc_to_vkc[_keyboard_queue];
 }

@@ -52,9 +52,9 @@ target("system")
         local parts = {}
 
         set_kind("binary") 
-
         set_targetdir("system")
         set_filename(config.software .. ".elf")
+        set_strip("none")
 
         add_includedirs("hardware/include")
         add_includedirs("software/include")
@@ -160,7 +160,7 @@ target("system")
         "-mabi=ilp32",
         --"-nostdlib",              -- no stdlib
         "-Wl,--gc-sections",
-        "-Wl,--strip-all",
+        --"-Wl,--strip-all",        
         --"-Wl,-u,_printf_float",   -- float printf
         "--specs=nano.specs",       -- newlib-nano
         "--specs=nosys.specs",      -- no system call

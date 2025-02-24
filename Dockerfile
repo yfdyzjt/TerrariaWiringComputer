@@ -19,6 +19,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     npm install -g xpm@latest && \
     xpm init && \
     xpm install @xpack-dev-tools/riscv-none-elf-gcc@latest --verbose
+ENV PATH=$PATH:/xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content/bin
 
 WORKDIR /TerrariaWiringComputer
 

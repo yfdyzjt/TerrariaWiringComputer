@@ -1,4 +1,3 @@
-
 local function _templink(target)
     import("core.tool.linker")
 
@@ -42,11 +41,11 @@ local function _size(sections)
     return size
 end
 
-function main(target, sdk_program)
+function main(target)
     import("readelf")
 
     local link_temp_file = _templink(target)
-    local link_temp_sections = readelf(sdk_program, link_temp_file)
+    local link_temp_sections = readelf(link_temp_file)
     local link_temp_sections_size = _size(link_temp_sections)
 
     return link_temp_sections_size

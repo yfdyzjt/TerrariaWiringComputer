@@ -7,7 +7,7 @@ ModifierKey modifier_key_state;
 
 bool modifier_key_test(ModifierKey key)
 {
-    return modifier_key_state & key != 0;
+    return (modifier_key_state & key) != 0;
 }
 
 void modifier_key_press(ModifierKey key)
@@ -42,6 +42,8 @@ void modifier_key_set(VK_KEY vk)
         break;
     case VK_CAPITAL:
         modifier_key_press(MK_CAPS_LOCK);
+        break;
+    default:
         break;
     }
 }
@@ -95,6 +97,8 @@ char character_key_to_ascii(VK_KEY vk)
             case VK_KEY_0:
                 c = ')';
                 break;
+            default:
+                break;
             }
     }
     else if ((vk >= VK_OEM_1 && vk <= VK_OEM_3) ||
@@ -136,6 +140,8 @@ char character_key_to_ascii(VK_KEY vk)
             case VK_OEM_7:
                 c = '\'';
                 break;
+            default:
+                break;
             }
         else
             switch (vk)
@@ -172,6 +178,8 @@ char character_key_to_ascii(VK_KEY vk)
                 break;
             case VK_OEM_7:
                 c = '"';
+            default:
+                break;
             }
     }
     else if (vk == VK_SPACE)
@@ -226,7 +234,7 @@ char keyboard_input_scan()
         VK_KEY vk = keyboard_scan();
         if (is_character_key(vk))
             return character_key_to_ascii(vk);
-        else if (is_modifier_key)
+        else if (is_modifier_key(vk))
             modifier_key_press(vk);
     }
 }

@@ -1,6 +1,6 @@
-function main(sdk_program, elf_file)
+function main(elf_file)
     local sections = {}
-    local content = os.iorunv(sdk_program .. "readelf", {"-S", "--wide", elf_file})
+    local content = os.iorunv("riscv-none-elf-readelf", {"-S", "--wide", elf_file})
 
     for line in content:gmatch("[^\r\n]+") do
         local section = {}

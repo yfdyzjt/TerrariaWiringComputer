@@ -23,13 +23,13 @@ local function _get_include_files(source_files, include_dirs)
     return include_files
 end
 
-local function _get_io_parts(object_files, include_files, sdk_program)
+local function _get_io_parts(object_files, include_files)
     import("readelf")
 
     local io_parts = {}
 
     for _, object_file in ipairs(object_files) do
-        local sections = readelf(sdk_program, object_file)
+        local sections = readelf(object_file)
 
         for _, section in ipairs(sections) do
             for _, include_file in ipairs(include_files) do
@@ -160,13 +160,13 @@ local function _get_data_mem(size, origin)
     return parts, origin
 end
 
-local function _get_io_mem(object_files, include_files, sdk_program, origin)
-    local parts = _get_io_parts(object_files, include_files, sdk_program)
+local function _get_io_mem(object_files, include_files, origin)
+    local parts = _get_io_parts(object_files, include_files)
     local origin = _assign_mem_addr(parts, origin)
     return parts, origin
 end
 
-function main(target, size, config, sdk_program)
+function main(target, size, config)
     local source_files = os.files("software/src/" .. config.software .. "/**.c")
     local object_files = target:objectfiles()
     local include_files = _get_include_files(source_files, target:get("includedirs"))
@@ -184,7 +184,7 @@ function main(target, size, config, sdk_program)
     local have_data_rom = size.rodata >= target_data_size / 2 and size.data < target_data_size / 2
     if have_data_rom then rodata_parts, origin = _get_rodata_mem(size.rodata, origin) end
     data_parts, origin = _get_data_mem(target_data_size, origin)
-    io_parts, origin = _get_io_mem(object_files, include_files, sdk_program, origin)
+    io_parts, origin = _get_io_mem(object_files, include_files, origin)
 
     return text_parts, rodata_parts, data_parts, io_parts
 end

@@ -3,14 +3,10 @@ set_version("1.0.0")
 
 add_rules("mode.debug", "mode.release")
 
-local sdk_dir = "../xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content"
-local bin_dir = sdk_dir .. "/bin/"
-local sdk_program = bin_dir .. "riscv-none-elf-"
-
 toolchain("riscv-none-elf")
     set_kind("standalone")
-    set_sdkdir(sdk_dir)
-    set_bindir(bin_dir)
+    set_sdkdir("/xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content")
+    set_bindir("/xpacks/@xpack-dev-tools/riscv-none-elf-gcc/.content/bin")
 toolchain_end()
 
 set_toolchains("riscv-none-elf")
@@ -88,8 +84,8 @@ target("system")
                 import("hardware.module.linkscript")
                 import("hardware.module.combiepart")
 
-                target_size = targetsize(target, sdk_program)
-                text_parts, rodata_parts, data_parts, io_parts = part(target, target_size, config, sdk_program)
+                target_size = targetsize(target)
+                text_parts, rodata_parts, data_parts, io_parts = part(target, target_size, config)
                 parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, config)
                 link_script = linkscript(mem_parts)
 
@@ -103,10 +99,10 @@ target("system")
                 local target_file = target:targetfile()
                 local final_file = target_file:gsub("%.elf$", ".bin")
                 
-                os.execv(sdk_program .. "objcopy", {"-O", "binary", target_file, final_file})
-                -- os.execv(sdk_program .. "size", {"-Ad", target_file})
+                os.execv("riscv-none-elf-objcopy", {"-O", "binary", target_file, final_file})
+                -- os.execv("riscv-none-elf-size", {"-Ad", target_file})
 
-                local result = os.iorunv(sdk_program .. "size", {"-Ad", target_file})
+                local result = os.iorunv("riscv-none-elf-size", {"-Ad", target_file})
                 if result then
                     result = result:gsub("(%s+)(%d+)(%s+)(%d+)", function(space1, size, space2, addr)
                         return space1 .. size .. string.format("%9s", string.format("0x%x", tonumber(addr)))

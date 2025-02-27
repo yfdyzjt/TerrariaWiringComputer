@@ -13,7 +13,7 @@ static int8_t cursor_x, cursor_y;
 
 static void cursor_draw()
 {
-    draw_char(DISPLAY_SIZE_X - CHARACTER_WIDTH - cursor_x, cursor_y, '|');
+    draw_char(DISPLAY_SIZE_X - CHARACTER_WIDTH - cursor_x, cursor_y, '_');
     display_refresh();
 }
 

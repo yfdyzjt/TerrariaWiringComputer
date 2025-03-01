@@ -36,9 +36,11 @@ static void cursor_draw_char(char c)
 static void display_output_previousline()
 {
     cursor_erase();
-    cursor_x = DISPLAY_SIZE_X - CHARACTER_WIDTH;
+    cursor_x = DISPLAY_SIZE_X - CHARACTER_WIDTH - 1;
     cursor_y -= CURSOR_STEP_Y;
     cursor_draw();
+    if (cursor_y < 0)
+        display_output_nextpage();
 }
 
 void display_output_backspace()
@@ -56,6 +58,8 @@ void display_output_nextline()
     cursor_x = 0;
     cursor_y += CURSOR_STEP_Y;
     cursor_draw();
+    if (cursor_y >= DISPLAY_SIZE_Y)
+        display_output_nextpage();
 }
 
 void display_output_nextpage()

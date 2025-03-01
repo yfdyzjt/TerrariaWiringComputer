@@ -9,26 +9,24 @@ int _read(int file, char *ptr, int len)
 {
     if (file == 0)
     {
-        int received;
-        for (received = 0; received < len; received++)
+        int received = 0;
+        while (received < len)
         {
-            ptr[received] = keyboard_input_scan();
-            if (ptr[received] == '\n')
+            char c = keyboard_input_scan();
+            if (c == '\b')
             {
-                received++;
-                break;
-            }
-            else if (ptr[received] == '\b')
-            {
-                if (received >= 1)
+                if (received > 0)
                 {
-                    display_output_print(ptr[received]);
-                    received -= 2;
+                    received--;
+                    display_output_print(c);
                 }
             }
             else
             {
-                display_output_print(ptr[received]);
+                ptr[received++] = c;
+                display_output_print(c);
+                if (c == '\n')
+                    break;
             }
         }
         return received;

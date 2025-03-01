@@ -2,11 +2,15 @@
 
 int main()
 {
-    int a, b;
-    printf("a: ");
+    int a = 0, b = 0;
+
     scanf("%d", &a);
-    printf("b: ");
+    printf("a = %d\n", a);
+
     scanf("%d", &b);
-    printf("a + b = %d", a + b);
+    printf("b = %d\n", b);
+
+    printf("a + b = %d\n", a + b);
+
     return 0;
 }

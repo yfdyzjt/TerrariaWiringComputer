@@ -235,7 +235,7 @@ char keyboard_input_scan()
         if (is_character_key(vk))
             return character_key_to_ascii(vk);
         else if (is_modifier_key(vk))
-            modifier_key_press(vk);
+            modifier_key_set(vk);
     }
 }
 

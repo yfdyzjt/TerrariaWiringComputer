@@ -161,7 +161,8 @@ target("system")
         --"-nostdlib",              -- no stdlib
         "-Wl,--gc-sections",
         --"-Wl,--strip-all",        
-        --"-Wl,-u,_printf_float",   -- float printf
+        "-Wl,-u,_printf_float",     -- float printf
+        "-Wl,-u,_scanf_float",      -- float scanf
         "--specs=nano.specs",       -- newlib-nano
         "--specs=nosys.specs",      -- no system call
         --"-flto",

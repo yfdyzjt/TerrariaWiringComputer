@@ -8,7 +8,7 @@
 int main()
 {
     char input[256];
-    int error_pos;
+    int error;
     double result;
 
     while (true)
@@ -17,18 +17,17 @@ int main()
         fflush(stdout);
 
         if (!fgets(input, sizeof(input), stdin))
-            break;
-
+            continue;
         input[strcspn(input, "\n")] = '\0';
 
-        error_pos = 0;
-        result = te_interp(input, &error_pos);
+        error = 0;
+        result = te_interp(input, &error);
 
-        if (error_pos != 0)
+        if (error != 0)
         {
             printf("  %s\n", input);
-            printf("  %*s^\n", error_pos - 1, "");
-            printf("syntax error: %d\n", error_pos);
+            printf("  %*s^\n", error - 1, "");
+            printf("syntax error: %d\n", error);
         }
         else
         {

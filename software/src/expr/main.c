@@ -7,7 +7,7 @@
 
 int main()
 {
-    char input[256];
+    char input[128];
     int error;
     double result;
 

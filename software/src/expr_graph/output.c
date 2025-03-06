@@ -11,9 +11,10 @@
 #define GRAPH_SIZE_X DISPLAY_SIZE_X
 #define GRAPH_SIZE_Y (DISPLAY_SIZE_Y - GRAPH_POS_Y + 1)
 
-#define SCREEN_TO_REAL_X(px) (((GRAPH_POS_X + GRAPH_SIZE_X / 2 - px) / params.scale_x) + params.center_x)
-#define REAL_TO_SCREEN_X(x) (GRAPH_POS_X + GRAPH_SIZE_X / 2 - ((x - params.center_x) * params.scale_x))
-#define REAL_TO_SCREEN_Y(y) (GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - ((y - params.center_y) * params.scale_y))
+#define SCREEN_TO_REAL_X(px) (double)(((GRAPH_POS_X + GRAPH_SIZE_X / 2 - px) / params.scale_x) + params.center_x)
+#define SCREEN_TO_REAL_Y(py) (double)(((GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - py) / params.scale_y) + params.center_y)
+#define REAL_TO_SCREEN_X(x) (int32_t)(GRAPH_POS_X + GRAPH_SIZE_X / 2 - ((x - params.center_x) * params.scale_x))
+#define REAL_TO_SCREEN_Y(y) (int32_t)(GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - ((y - params.center_y) * params.scale_y))
 
 expr_graph_params params;
 

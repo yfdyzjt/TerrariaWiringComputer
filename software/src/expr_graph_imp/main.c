@@ -12,9 +12,10 @@
 int main()
 {
     char input[128];
+    char processed_input[128];
     int error;
-    double x;
-    te_variable vars[] = {{"x", &x}};
+    double x, y;
+    te_variable vars[] = {{"x", &x}, {"y", &y}};
     te_expr *expr;
 
     while (true)
@@ -25,13 +26,28 @@ int main()
         if (!fgets(input, sizeof(input), stdin))
             continue;
         input[strcspn(input, "\n")] = '\0';
+        char *equals_sign = strchr(input, '=');
+        if (equals_sign == NULL)
+        {
+            strcat(input, "=0");
+            strcpy(processed_input, input);
+        }
+        else
+        {
+            strncpy(processed_input, input, equals_sign - input);
+            processed_input[equals_sign - input] = '\0';
+
+            strcat(processed_input, "-(");
+            strcat(processed_input, equals_sign + 1);
+            strcat(processed_input, ")");
+        }
 
         error = 0;
-        expr = te_compile(input, vars, sizeof(vars) / sizeof(te_variable), &error);
+        expr = te_compile(processed_input, vars, sizeof(vars) / sizeof(te_variable), &error);
 
         if (error != 0)
         {
-            printf("  %s\n", input);
+            printf("  %s\n", processed_input);
             printf("  %*s^\n", error - 1, "");
             printf("syntax error: %d\n", error);
         }
@@ -61,7 +77,7 @@ int main()
             params.scale_y = scale_y;
 
             draw_init(input);
-            draw_expr(expr, &x);
+            draw_implicit_expr(expr, &x, &y);
 
             while (true)
                 if (keyboard_input_scan() == '\n')

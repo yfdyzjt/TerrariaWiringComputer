@@ -65,6 +65,26 @@ static void draw_short_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
     }
 }
 
+static int32_t linear_interpolate(int32_t *p1, int32_t *p2, double *f1, double *f2)
+{
+    int32_t c;
+    double f1_abs = fabs(*f1), f2_abs = fabs(*f2);
+
+    f1_abs = f1_abs < EPSILON ? EPSILON : f1_abs;
+    f2_abs = f2_abs < EPSILON ? EPSILON : f2_abs;
+
+    if ((*f1 > 0) != (*f2 > 0))
+    {
+        double t = f1_abs / (f1_abs + f2_abs);
+        c = *p1 + (int32_t)round(t * (*p2 - *p1));
+        c = (c < *p1) ? *p1 : ((c > *p2) ? *p2 : c);
+    }
+    else
+        c = (*p1 + *p2) / 2;
+
+    return c;
+}
+
 static void draw_marching_squares(int32_t x1, int32_t y1, int32_t x2, int32_t y2,
                                   double *f1, double *f2, double *f3, double *f4)
 {
@@ -86,22 +106,10 @@ static void draw_marching_squares(int32_t x1, int32_t y1, int32_t x2, int32_t y2
     int32_t cy = (y1 + y2) / 2;
     */
 
-    double f1_abs = fabs(*f1), f2_abs = fabs(*f2), f3_abs = fabs(*f3), f4_abs = fabs(*f4);
-
-    f1_abs = f1_abs < EPSILON ? EPSILON : f1_abs;
-    f2_abs = f2_abs < EPSILON ? EPSILON : f2_abs;
-    f3_abs = f3_abs < EPSILON ? EPSILON : f3_abs;
-    f4_abs = f4_abs < EPSILON ? EPSILON : f4_abs;
-
-    int32_t cx1 = round((f1_abs * x1 + f2_abs * x2) / (f1_abs + f2_abs));
-    int32_t cx2 = round((f3_abs * x1 + f4_abs * x2) / (f3_abs + f4_abs));
-    int32_t cy1 = round((f1_abs * y1 + f3_abs * y2) / (f1_abs + f3_abs));
-    int32_t cy2 = round((f2_abs * y1 + f4_abs * y2) / (f2_abs + f4_abs));
-
-    cx1 = (cx1 < x1) ? x1 : ((cx1 > x2) ? x2 : cx1);
-    cx2 = (cx2 < x1) ? x1 : ((cx2 > x2) ? x2 : cx2);
-    cy1 = (cy1 < y1) ? y1 : ((cy1 > y2) ? y2 : cy1);
-    cy2 = (cy2 < y1) ? y1 : ((cy2 > y2) ? y2 : cy2);
+    int32_t cx1 = linear_interpolate(&x1, &x2, f1, f2);
+    int32_t cx2 = linear_interpolate(&x1, &x2, f3, f4);
+    int32_t cy1 = linear_interpolate(&y1, &y2, f1, f3);
+    int32_t cy2 = linear_interpolate(&y1, &y2, f2, f4);
 
     if (index == 6)
     {

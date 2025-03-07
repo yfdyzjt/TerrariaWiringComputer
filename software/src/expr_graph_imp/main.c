@@ -29,8 +29,8 @@ int main()
         char *equals_sign = strchr(input, '=');
         if (equals_sign == NULL)
         {
-            strcat(input, "=0");
             strcpy(processed_input, input);
+            strcat(input, "=0");
         }
         else
         {

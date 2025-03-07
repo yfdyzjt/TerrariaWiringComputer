@@ -14,8 +14,8 @@
 
 #define SCREEN_TO_REAL_X(px) (double)(((GRAPH_POS_X + GRAPH_SIZE_X / 2 - px) / params.scale_x) + params.center_x)
 #define SCREEN_TO_REAL_Y(py) (double)(((GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - py) / params.scale_y) + params.center_y)
-#define REAL_TO_SCREEN_X(x) (int32_t)(GRAPH_POS_X + GRAPH_SIZE_X / 2 - ((x - params.center_x) * params.scale_x))
-#define REAL_TO_SCREEN_Y(y) (int32_t)(GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - ((y - params.center_y) * params.scale_y))
+#define REAL_TO_SCREEN_X(x) (int32_t)round(GRAPH_POS_X + GRAPH_SIZE_X / 2 - ((x - params.center_x) * params.scale_x))
+#define REAL_TO_SCREEN_Y(y) (int32_t)round(GRAPH_POS_Y + GRAPH_SIZE_Y / 2 - ((y - params.center_y) * params.scale_y))
 
 expr_graph_params params;
 
@@ -34,23 +34,36 @@ void draw_init(const char *input)
 #define EPSILON 1e-6
 
 static const int8_t ms_points[16] = {
-    0b0000, // 0000
-    0b0001, // 0001
-    0b0010, // 0010
-    0b0011, // 0011
-    0b0100, // 0100
-    0b0101, // 0101
-    0b1111, // 0110
-    0b1000, // 0111
-    0b1000, // 1000
-    0b1111, // 1001
-    0b0101, // 1010
-    0b0100, // 1011
-    0b0011, // 1100
-    0b0010, // 1101
-    0b0001, // 1110
-    0b0000, // 1111
+    0b0000,
+    0b0011,
+    0b0101,
+    0b0110,
+    0b1010,
+    0b1001,
+    0b0000,
+    0b1100,
+    0b1100,
+    0b0000,
+    0b1001,
+    0b1010,
+    0b0110,
+    0b0101,
+    0b0011,
+    0b0000,
 };
+
+static void draw_short_line(int32_t x1, int32_t y1, int32_t x2, int32_t y2)
+{
+    draw_pixel(x1, y1, 1);
+    draw_pixel(x2, y2, 1);
+
+    if (abs(x2 - x1) > 1 || abs(y2 - y1) > 1)
+    {
+        int32_t xm = (x1 + x2) / 2;
+        int32_t ym = (y1 + y2) / 2;
+        draw_pixel(xm, ym, 1);
+    }
+}
 
 static void draw_marching_squares(int32_t x1, int32_t y1, int32_t x2, int32_t y2,
                                   double *f1, double *f2, double *f3, double *f4)
@@ -68,16 +81,101 @@ static void draw_marching_squares(int32_t x1, int32_t y1, int32_t x2, int32_t y2
     if (index == 0 || index == 15)
         return;
 
-    int8_t segments = ms_points[index];
+    /*
+    int32_t cx = (x1 + x2) / 2;
+    int32_t cy = (y1 + y2) / 2;
+    */
 
+    double f1_abs = fabs(*f1), f2_abs = fabs(*f2), f3_abs = fabs(*f3), f4_abs = fabs(*f4);
+
+    f1_abs = f1_abs < EPSILON ? EPSILON : f1_abs;
+    f2_abs = f2_abs < EPSILON ? EPSILON : f2_abs;
+    f3_abs = f3_abs < EPSILON ? EPSILON : f3_abs;
+    f4_abs = f4_abs < EPSILON ? EPSILON : f4_abs;
+
+    int32_t cx1 = round((f1_abs * x1 + f2_abs * x2) / (f1_abs + f2_abs));
+    int32_t cx2 = round((f3_abs * x1 + f4_abs * x2) / (f3_abs + f4_abs));
+    int32_t cy1 = round((f1_abs * y1 + f3_abs * y2) / (f1_abs + f3_abs));
+    int32_t cy2 = round((f2_abs * y1 + f4_abs * y2) / (f2_abs + f4_abs));
+
+    cx1 = (cx1 < x1) ? x1 : ((cx1 > x2) ? x2 : cx1);
+    cx2 = (cx2 < x1) ? x1 : ((cx2 > x2) ? x2 : cx2);
+    cy1 = (cy1 < y1) ? y1 : ((cy1 > y2) ? y2 : cy1);
+    cy2 = (cy2 < y1) ? y1 : ((cy2 > y2) ? y2 : cy2);
+
+    if (index == 6)
+    {
+        if (fabs(*f1) + fabs(*f4) < fabs(*f2) + fabs(*f3))
+        {
+            draw_short_line(cx1, y1, x1, cy1);
+            draw_short_line(x2, cy2, cx2, y2);
+        }
+        else
+        {
+            draw_short_line(cx1, y1, x2, cy2);
+            draw_short_line(x1, cy1, cx2, y2);
+        }
+    }
+    else if (index == 9)
+    {
+        if (fabs(*f2) + fabs(*f3) < fabs(*f1) + fabs(*f4))
+        {
+            draw_short_line(cx1, y1, x2, cy2);
+            draw_short_line(x1, cy1, cx2, y2);
+        }
+        else
+        {
+            draw_short_line(cx1, y1, x1, cy1);
+            draw_short_line(x2, cy2, cx2, y2);
+        }
+    }
+    else
+    {
+        int8_t segments = ms_points[index];
+        int8_t i = 0;
+        int32_t points[2][2] = {0};
+
+        if (segments & 1)
+        {
+            points[i][0] = cx1;
+            points[i][1] = y1;
+            i++;
+        }
+        if (segments & 2)
+        {
+            points[i][0] = x1;
+            points[i][1] = cy1;
+            i++;
+        }
+        if (segments & 4)
+        {
+            points[i][0] = x2;
+            points[i][1] = cy2;
+            i++;
+        }
+        if (segments & 8)
+        {
+            points[i][0] = cx2;
+            points[i][1] = y2;
+            i++;
+        }
+
+        draw_short_line(points[0][0], points[0][1], points[1][0], points[1][1]);
+    }
+
+    /*
     if (segments & 1)
-        draw_pixel(x1, y1, 1);
+        draw_pixel(cx, y1, 1);
     if (segments & 2)
-        draw_pixel(x1 + 1, y1, 1);
+        draw_pixel(x1, cy, 1);
     if (segments & 4)
-        draw_pixel(x1, y1 + 1, 1);
+        draw_pixel(x2, cy, 1);
     if (segments & 8)
-        draw_pixel(x1 + 1, y1 + 1, 1);
+        draw_pixel(cx, y2, 1);
+    if (segments == 0b1001 || segments == 0b0110)
+        draw_pixel(cx, cy, 1);
+    */
+
     display_refresh();
 }
 

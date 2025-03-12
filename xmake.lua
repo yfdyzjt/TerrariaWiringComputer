@@ -15,22 +15,37 @@ set_arch("riscv")
 
 option("world")
     set_default("terraria_computer_large")
+    set_description("Name of the world")
 option_end()
 
 option("cpu")
     set_default("cpu_rv32imc")
+    set_description("Name of the CPU")
 option_end()
 
 option("driver")
-    set_default("driver_portal_gun_station_x20_6.96kHz")
+    set_default("6.96K")
+    set_description("Value of the drive frequency")
 option_end()
 
 option("ram")
     set_default("4K")
+    set_description("Size of the data RAM")
 option_end()
 
 option("software")
     set_default("helloworld")
+    set_description("Name of the software")
+option_end()
+
+option("printf_float")
+    set_default(false)
+    set_description("Enable floating point printf support")
+option_end()
+
+option("scanf_float")
+    set_default(false)
+    set_description("Enable floating point scanf support")
 option_end()
 
 target("system")
@@ -39,6 +54,8 @@ target("system")
     add_options("driver")
     add_options("ram")
     add_options("software")
+    add_options("printf_float")
+    add_options("scanf_float")
 
     local config = {}
 
@@ -47,6 +64,8 @@ target("system")
     config.driver = get_config("driver")
     config.ram = get_config("ram")
     config.software = get_config("software")
+    config.printf_float = get_config("printf_float")
+    config.scanf_float = get_config("scanf_float")
 
     if config.world and config.software then
         local parts = {}
@@ -59,7 +78,7 @@ target("system")
         add_includedirs("hardware/include")
         add_includedirs("software/include")
         add_files("hardware/lib/**.c")
-        -- add_files("software/lib/**.c")
+        add_files("software/lib/**.c")
 
         add_files("hardware/entry/start.s")
         add_files("hardware/entry/reset.c")
@@ -68,6 +87,8 @@ target("system")
         add_files("software/src/" .. config.software .. "/**.c")
 
         add_ldflags("-Wl,-T,./system/" .. config.software .. "_link.ld")
+        if config.printf_float then add_ldflags("-Wl,-u,_printf_float") end
+        if config.scanf_float then add_ldflags("-Wl,-u,_scanf_float") end
 
         before_build(
             function (target)
@@ -85,8 +106,8 @@ target("system")
                 import("hardware.module.combiepart")
 
                 target_size = targetsize(target)
-                text_parts, rodata_parts, data_parts, io_parts = part(target, target_size, config)
-                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, config)
+                text_parts, rodata_parts, data_parts, io_parts, driver_parts = part(target, target_size, config)
+                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, driver_parts, config)
                 link_script = linkscript(mem_parts)
 
                 io.writefile("./system/" .. config.software .. "_link.ld", link_script)
@@ -161,8 +182,6 @@ target("system")
         --"-nostdlib",              -- no stdlib
         "-Wl,--gc-sections",
         --"-Wl,--strip-all",        
-        "-Wl,-u,_printf_float",     -- float printf
-        "-Wl,-u,_scanf_float",      -- float scanf
         "--specs=nano.specs",       -- newlib-nano
         "--specs=nosys.specs",      -- no system call
         --"-flto",

@@ -59,9 +59,6 @@ int main()
         draw_integral_result(&result);
 
         te_free(expr);
-        int32_t c;
-        while ((c = getchar()) != '\n' && c != EOF)
-            ;
         while (true)
             if (keyboard_input_scan() == '\n')
                 break;

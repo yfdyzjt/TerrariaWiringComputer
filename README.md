@@ -101,8 +101,10 @@ Refer to the table below for configuration options:
 
 | Config Key | Default Value | Path | Description |
 | ---- | ---- | ---- | ---- |
-| software | helloworld | `software/src` | Name of the software to compile |
-| world | terraria_computer_large | `hardware/world` | Name of the world for the build |
-| cpu | cpu_rv32imc | `hardware/wiring/cpu` | Name of the CPU for the build |
-| driver | driver_portal_gun_station_x20_6.96kHz | `hardware/wiring/driver` | Name of the driver for the build |
-| ram | 4K | `hardware/wiring/memory/data` | Size of the data RAM for the build (supports K and M suffixes) |
+| software | `helloworld` | `software/src` | Name of the software |
+| world | `terraria_computer_large` | `hardware/world` | Name of the world |
+| cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
+| driver | `6.96K` | `hardware/wiring/driver` | Value of the drive frequency |
+| ram | `4K` | `hardware/wiring/memory/data` | Size of the data RAM |
+| printf_float | `false` | `-` | Enable floating point printf support |
+| scanf_float | `false` | `-` | Enable floating point scanf support |

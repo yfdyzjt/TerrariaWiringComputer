@@ -25,7 +25,7 @@ local function _have_input(io_parts)
     return false
 end
 
-function main(text_parts, rodata_parts, data_parts, io_parts, config)
+function main(text_parts, rodata_parts, data_parts, io_parts, driver_parts, config)
     local parts = {}
     local mem_parts = {}
     
@@ -40,7 +40,7 @@ function main(text_parts, rodata_parts, data_parts, io_parts, config)
     _combine_parts(parts, data_parts)
     _combine_parts(parts, io_parts)
     if not _have_input(io_parts) then table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"}) end
-    table.insert(parts, {name = config.driver, file = config.driver, type = "driver"})
+    _combine_parts(parts, driver_parts)
 
     return parts, mem_parts
 end

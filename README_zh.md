@@ -101,8 +101,10 @@ xmake f --[ConfigKey]=[ConfigValue]
 
 | 配置项 | 默认值 | 路径 | 描述 |
 | --- | --- | --- | --- |
-| software | helloworld | `software/src` | 需要编译的软件名称 |
-| world | terraria_computer_large | `hardware/world` | 构建使用的世界名称 |
-| cpu | cpu_rv32imc | `hardware/wiring/cpu` | 构建使用的CPU名称 |
-| driver | driver_portal_gun_station_x20_6.96kHz | `hardware/wiring/driver` | 构建使用的驱动名称 |
-| ram | 4K | `hardware/wiring/memory/data` | 构建使用的数据RAM大小（支持K和M后缀） |
+| software | `helloworld` | `software/src` | 编译的软件名称 |
+| world | `terraria_computer_large` | `hardware/world` | 使用的世界名称 |
+| cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
+| driver | `6.96K` | `hardware/wiring/driver` | 使用的驱动频率大小 |
+| ram | `4K` | `hardware/wiring/memory/data` | 使用的数据RAM大小 |
+| printf_float | `false` | `-` | 启用浮点数输出支持 |
+| scanf_float | `false` | `-` | 启用浮点数输入支持 |

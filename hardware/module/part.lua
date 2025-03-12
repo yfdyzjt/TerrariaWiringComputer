@@ -61,7 +61,7 @@ local function _get_io_parts(object_files, include_files)
 end
 
 local function _parse_size(size_str)
-    local num = tonumber(size_str:match("%d+"))
+    local num = tonumber(size_str:match("([%d%.]+)"))
     local unit = size_str:match("%a")
 
     if not num then
@@ -69,10 +69,28 @@ local function _parse_size(size_str)
         error()
     end
 
-    if unit == "K" then
-        return num << 10
-    elseif unit == "M" then
-        return num << 20
+    if unit == "K" or unit == "k" then
+        return num * 1024
+    elseif unit == "M" or unit == "m" then
+        return num * 1024 * 1024
+    else
+        return num
+    end
+end
+
+local function _parse_freq(freq_str)
+    local num = tonumber(freq_str:match("([%d%.]+)"))
+    local unit = freq_str:match("%a")
+
+    if not num then
+        print("Invalid size format")
+        error()
+    end
+
+    if unit == "K" or unit == "k" then
+        return num * 1000
+    elseif unit == "M" or unit == "m" then
+        return num * 1000 * 1000
     else
         return num
     end
@@ -87,10 +105,6 @@ local function _assign_mem_addr(parts, origin)
     end
 
     return origin
-end
-
-local function _sort_by_length_asc(a, b)
-    return a.length < b.length
 end
 
 local function _deepcopy(orig)
@@ -118,9 +132,15 @@ local function _get_mem_parts(dir, prefix, type, rwx, target_length)
 
     for _, mem_file in ipairs(mem_files) do
         local name = path.filename(mem_file):gsub("%.TEditSch", "")
-        local size = name:match("_(%d+[KM]?)B")
+        local size = name:match("_([%d%.]+[KkMm]?)B$")
         if size then
-            table.insert(mem_parts, {name = name, file = name, type = type, rwx = rwx, length = _parse_size(size)})
+            table.insert(mem_parts, {
+                name = name, 
+                file = name, 
+                type = type, 
+                rwx = rwx, 
+                length = _parse_size(size)
+            })
         end
     end
 
@@ -128,7 +148,7 @@ local function _get_mem_parts(dir, prefix, type, rwx, target_length)
     local used_length = 0
     local name_counter = {}
 
-    table.sort(mem_parts, _sort_by_length_asc)
+    table.sort(mem_parts, function(a, b) return a.length < b.length end)
     while used_length < target_length do
         for i, part in ipairs(mem_parts) do
             if used_length + part.length >= target_length or i == #mem_parts then
@@ -137,6 +157,45 @@ local function _get_mem_parts(dir, prefix, type, rwx, target_length)
                 break
             end
         end
+    end
+
+    return parts
+end
+
+local function _get_driver_parts(target_freq)
+    local driver_files = os.files("hardware/wiring/driver/*.TEditSch")
+    local driver_parts = {}
+
+    for _, driver_file in ipairs(driver_files) do
+        local name = path.filename(driver_file):gsub("%.TEditSch", "")
+        local freq = name:match("_([%d%.]+[KkMm]?)Hz$")
+        
+        if freq then
+            table.insert(driver_parts, {
+                name = name,
+                file = name,
+                type = "driver",
+                freq = _parse_freq(freq)
+            })
+        end
+    end
+
+    local parts = {}
+    local used_freq = 0
+    local name_counter = {}
+
+    table.sort(driver_parts, function(a, b) return a.freq > b.freq end)
+    while used_freq < target_freq do
+        local best_part = driver_parts[#driver_parts]
+        for _, part in ipairs(driver_parts) do
+            if part.freq <= (target_freq - used_freq) then
+                best_part = part
+                break
+            end
+        end
+        
+        used_freq = used_freq + best_part.freq
+        table.insert(parts, _rename_part(best_part, name_counter))
     end
 
     return parts
@@ -166,16 +225,23 @@ local function _get_io_mem(object_files, include_files, origin)
     return parts, origin
 end
 
+local function _get_driver(freq)
+    local parts = _get_driver_parts(freq)
+    return parts
+end
+
 function main(target, size, config)
     local source_files = os.files("software/src/" .. config.software .. "/**.c")
     local object_files = target:objectfiles()
     local include_files = _get_include_files(source_files, target:get("includedirs"))
     local target_data_size = _parse_size(config.ram)
+    local target_driver_freq = _parse_freq(config.driver)
 
     local text_parts = {}
     local rodata_parts = {}
     local data_parts = {}
     local io_parts = {}
+    local driver_parts = {}
 
     local origin = 0
 
@@ -185,6 +251,7 @@ function main(target, size, config)
     if have_data_rom then rodata_parts, origin = _get_rodata_mem(size.rodata, origin) end
     data_parts, origin = _get_data_mem(target_data_size, origin)
     io_parts, origin = _get_io_mem(object_files, include_files, origin)
+    driver_parts = _get_driver(target_driver_freq)
 
-    return text_parts, rodata_parts, data_parts, io_parts
+    return text_parts, rodata_parts, data_parts, io_parts, driver_parts
 end

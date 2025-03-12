@@ -77,9 +77,6 @@ int main()
             draw_implicit_expr(expr, &x, &y);
 
             te_free(expr);
-            int32_t c;
-            while ((c = getchar()) != '\n' && c != EOF)
-                ;
             while (true)
                 if (keyboard_input_scan() == '\n')
                     break;

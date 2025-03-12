@@ -61,9 +61,6 @@ int main()
             draw_expr(expr, &x);
 
             te_free(expr);
-            int32_t c;
-            while ((c = getchar()) != '\n' && c != EOF)
-                ;
             while (true)
                 if (keyboard_input_scan() == '\n')
                     break;

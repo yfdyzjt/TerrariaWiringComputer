@@ -19,6 +19,7 @@ int main()
 
     while (true)
     {
+        display_output_nextpage();
         printf("> ");
         fflush(stdout);
 
@@ -51,10 +52,6 @@ int main()
             fflush(stdout);
             scanf("%lf", &scale_y);
 
-            int32_t c;
-            while ((c = getchar()) != '\n' && c != EOF)
-                ;
-
             params.center_x = center_x;
             params.center_y = center_y;
             params.scale_x = scale_x;
@@ -63,12 +60,13 @@ int main()
             draw_init(input);
             draw_expr(expr, &x);
 
+            te_free(expr);
+            int32_t c;
+            while ((c = getchar()) != '\n' && c != EOF)
+                ;
             while (true)
                 if (keyboard_input_scan() == '\n')
                     break;
-
-            display_output_nextpage();
-            te_free(expr);
         }
     }
     return 0;

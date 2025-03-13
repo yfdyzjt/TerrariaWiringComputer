@@ -25,22 +25,24 @@ local function _have_input(io_parts)
     return false
 end
 
-function main(text_parts, rodata_parts, data_parts, io_parts, driver_parts, config)
-    local parts = {}
+function main(parts, config)
+    local ser_parts = {}
     local mem_parts = {}
     
-    table.insert(mem_parts, _combine_mem_parts("INS_ROM", text_parts))
-    table.insert(mem_parts, _combine_mem_parts("DATA_ROM", rodata_parts))
-    table.insert(mem_parts, _combine_mem_parts("DATA_RAM", data_parts))
-    _combine_parts(mem_parts, io_parts)
+    if parts.text then table.insert(mem_parts, _combine_mem_parts("INS_ROM", parts.text)) end
+    if parts.rodata then table.insert(mem_parts, _combine_mem_parts("DATA_ROM", parts.rodata)) end
+    if parts.data then table.insert(mem_parts, _combine_mem_parts("DATA_RAM", parts.data)) end
+    if parts.io then _combine_parts(mem_parts, parts.io) end
 
-    table.insert(parts, {name = config.cpu, file = config.cpu, type = "cpu"})
-    _combine_parts(parts, text_parts)
-    _combine_parts(parts, rodata_parts)
-    _combine_parts(parts, data_parts)
-    _combine_parts(parts, io_parts)
-    if not _have_input(io_parts) then table.insert(parts, {name = "power_switch", file = "power_switch", type = "input"}) end
-    _combine_parts(parts, driver_parts)
+    table.insert(ser_parts, {name = config.cpu, file = config.cpu, type = "cpu"})
+    if parts.text then _combine_parts(ser_parts, parts.text) end
+    if parts.rodata then _combine_parts(ser_parts, parts.rodata) end
+    if parts.data then _combine_parts(ser_parts, parts.data) end
+    if parts.io then _combine_parts(ser_parts, parts.io) end
+    if parts.io and not _have_input(parts.io) then
+        table.insert(ser_parts, {name = "power_switch", file = "power_switch", type = "input"})
+    end
+    if parts.driver then _combine_parts(ser_parts, parts.driver) end
 
-    return parts, mem_parts
+    return ser_parts, mem_parts
 end

@@ -78,18 +78,18 @@ target("system")
 
         before_link(
             function (target)
-                import("hardware.module.targetsize")
+                import("hardware.module.prelink")
                 import("hardware.module.part")
                 import("hardware.module.linkscript")
                 import("hardware.module.combiepart")
 
-                target_size = targetsize(target)
-                text_parts, rodata_parts, data_parts, io_parts, driver_parts = part(target, target_size, cur_config)
-                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, driver_parts, cur_config)
+                sections = prelink(target)
+                parts = part(sections, cur_config)
+                ser_parts, mem_parts = combiepart(parts, cur_config)
                 link_script = linkscript(mem_parts)
 
                 io.writefile("./system/" .. cur_config.software .. "_link.ld", link_script)
-                io.save("./system/" .. cur_config.software .. "_part.lua", parts)
+                io.save("./system/" .. cur_config.software .. "_part.lua", ser_parts)
             end
         )
     

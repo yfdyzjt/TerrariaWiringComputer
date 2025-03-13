@@ -9,7 +9,6 @@ function main(elf_file)
         
         if section.name and section.size and section.type then
             section.size = tonumber(section.size, 16)
-            
             table.insert(sections, section)
         end
     end

@@ -91,17 +91,24 @@ copy_world
 
 ### Configuration
 
-Run the following command inside the Docker container to configure the build target:
+Run the following command inside the Docker container to configure the build software:
 
 ```bash
-xmake f --[ConfigKey]=[ConfigValue]
+xmake f --s=[SoftwareName]
 ```
 
-Refer to the table below for configuration options:
+To configure additional options, create a `xmake.lua` file in the root directory of the build software:
+
+```lua
+config = {
+    [ConfigKey1] = [ConfigValue1],
+    [ConfigKey2] = [ConfigValue2],
+    [ConfigKey3] = [ConfigValue3]
+}
+```
 
 | Config Key | Default Value | Path | Description |
 | ---- | ---- | ---- | ---- |
-| software | `helloworld` | `software/src` | Name of the software |
 | world | `terraria_computer_large` | `hardware/world` | Name of the world |
 | cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
 | driver | `6.96K` | `hardware/wiring/driver` | Value of the drive frequency |

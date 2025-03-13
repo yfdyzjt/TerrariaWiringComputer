@@ -1,5 +1,5 @@
 set_project("terraria_wiring_computer")
-set_version("1.0.0")
+set_version("1.0.0", {build = "%Y%m%d"})
 
 add_rules("mode.debug", "mode.release")
 
@@ -10,69 +10,47 @@ toolchain("riscv-none-elf")
 toolchain_end()
 
 set_toolchains("riscv-none-elf")
+set_defaultplat("cross")
+set_defaultarchs("riscv")
 set_plat("cross")
 set_arch("riscv")
 
-option("world")
-    set_default("terraria_computer_large")
-    set_description("Name of the world")
-option_end()
-
-option("cpu")
-    set_default("cpu_rv32imc")
-    set_description("Name of the CPU")
-option_end()
-
-option("driver")
-    set_default("6.96K")
-    set_description("Value of the drive frequency")
-option_end()
-
-option("ram")
-    set_default("4K")
-    set_description("Size of the data RAM")
-option_end()
-
-option("software")
+option("s")
     set_default("helloworld")
-    set_description("Name of the software")
-option_end()
-
-option("printf_float")
-    set_default(false)
-    set_description("Enable floating point printf support")
-option_end()
-
-option("scanf_float")
-    set_default(false)
-    set_description("Enable floating point scanf support")
+    set_description("Name of the software build")
 option_end()
 
 target("system")
-    add_options("world")
-    add_options("cpu")
-    add_options("driver")
-    add_options("ram")
-    add_options("software")
-    add_options("printf_float")
-    add_options("scanf_float")
+    add_options("s")
 
-    local config = {}
+    local cur_config = {}
+    cur_config.software = get_config("s")
+    cur_config.world = "terraria_computer_large"
+    cur_config.cpu = "cpu_rv32imc"
+    cur_config.driver = "6.96K"
+    cur_config.ram = "4K"
+    cur_config.printf_float = false
+    cur_config.scanf_float = false
 
-    config.world = get_config("world")
-    config.cpu = get_config("cpu")
-    config.driver = get_config("driver")
-    config.ram = get_config("ram")
-    config.software = get_config("software")
-    config.printf_float = get_config("printf_float")
-    config.scanf_float = get_config("scanf_float")
+    if cur_config.software then
+        local sub_path = "software/src/" .. cur_config.software .. "/xmake.lua"
+        if os.isfile(sub_path) then
+            includes(sub_path)
+            if config then
+                if config.world ~= nil then cur_config.world = config.world end
+                if config.cpu ~= nil then cur_config.cpu = config.cpu end
+                if config.driver ~= nil then cur_config.driver = config.driver end
+                if config.ram ~= nil then cur_config.ram = config.ram end
+                if config.printf_float ~= nil then cur_config.printf_float = config.printf_float end
+                if config.scanf_float ~= nil then cur_config.scanf_float = config.scanf_float end
+            end
+        end
 
-    if config.world and config.software then
         local parts = {}
 
         set_kind("binary") 
         set_targetdir("system")
-        set_filename(config.software .. ".elf")
+        set_filename(cur_config.software .. ".elf")
         set_strip("none")
 
         add_includedirs("hardware/include")
@@ -83,12 +61,12 @@ target("system")
         add_files("hardware/entry/start.s")
         add_files("hardware/entry/reset.c")
 
-        add_includedirs("software/src/" .. config.software)  
-        add_files("software/src/" .. config.software .. "/**.c")
+        add_includedirs("software/src/" .. cur_config.software)  
+        add_files("software/src/" .. cur_config.software .. "/**.c")
 
-        add_ldflags("-Wl,-T,./system/" .. config.software .. "_link.ld")
-        if config.printf_float then add_ldflags("-Wl,-u,_printf_float") end
-        if config.scanf_float then add_ldflags("-Wl,-u,_scanf_float") end
+        add_ldflags("-Wl,-T,./system/" .. cur_config.software .. "_link.ld")
+        if cur_config.printf_float then add_ldflags("-Wl,-u,_printf_float") end
+        if cur_config.scanf_float then add_ldflags("-Wl,-u,_scanf_float") end
 
         before_build(
             function (target)
@@ -106,12 +84,12 @@ target("system")
                 import("hardware.module.combiepart")
 
                 target_size = targetsize(target)
-                text_parts, rodata_parts, data_parts, io_parts, driver_parts = part(target, target_size, config)
-                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, driver_parts, config)
+                text_parts, rodata_parts, data_parts, io_parts, driver_parts = part(target, target_size, cur_config)
+                parts, mem_parts = combiepart(text_parts, rodata_parts, data_parts, io_parts, driver_parts, cur_config)
                 link_script = linkscript(mem_parts)
 
-                io.writefile("./system/" .. config.software .. "_link.ld", link_script)
-                io.save("./system/" .. config.software .. "_part.lua", parts)
+                io.writefile("./system/" .. cur_config.software .. "_link.ld", link_script)
+                io.save("./system/" .. cur_config.software .. "_part.lua", parts)
             end
         )
     
@@ -131,7 +109,7 @@ target("system")
                     print(result)
                 end
                 
-                os.exec("tmake do \"Include(self,\\\"./hardware/module/make.lua\\\").MakeWorld(\\\"" .. config.world .. "\\\",\\\"" .. config.software .. "\\\")\"")
+                os.exec("tmake do \"Include(self,\\\"./hardware/module/make.lua\\\").MakeWorld(\\\"" .. cur_config.world .. "\\\",\\\"" .. cur_config.software .. "\\\")\"")
             end
         )
         

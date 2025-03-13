@@ -65,8 +65,7 @@ local function _parse_size(size_str)
     local unit = size_str:match("%a")
 
     if not num then
-        print("Invalid size format")
-        error()
+        raise("Invalid size format")
     end
 
     if unit == "K" or unit == "k" then
@@ -83,8 +82,7 @@ local function _parse_freq(freq_str)
     local unit = freq_str:match("%a")
 
     if not num then
-        print("Invalid size format")
-        error()
+        raise("Invalid freq format")
     end
 
     if unit == "K" or unit == "k" then
@@ -245,7 +243,7 @@ function main(target, size, config)
 
     local origin = 0
 
-    if size.data > target_data_size then print("ram cannot hold data.") error() end
+    if size.data > target_data_size then raise("ram cannot hold data.") end
     text_parts, origin = _get_ins_mem(size.text, origin)
     local have_data_rom = size.rodata >= target_data_size / 2 and size.data < target_data_size / 2
     if have_data_rom then rodata_parts, origin = _get_rodata_mem(size.rodata, origin) end

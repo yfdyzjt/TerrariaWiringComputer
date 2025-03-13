@@ -91,17 +91,24 @@ copy_world
 
 ### 配置
 
-在 docker 容器中执行下面的指令配置构建目标
+在 docker 容器中执行下面的指令设置构建软件对象
 
 ```bash
-xmake f --[ConfigKey]=[ConfigValue]
+xmake f --s=[SoftwareName]
 ```
 
-配置相关内容请参考下表
+如需配置其它选项，请在对应软件根目录新建一个内容如下的 `xmake.lua` 文件
+
+```lua
+config = {
+    [ConfigKey1] = [ConfigValue1],
+    [ConfigKey2] = [ConfigValue2],
+    [ConfigKey3] = [ConfigValue3]
+}
+```
 
 | 配置项 | 默认值 | 路径 | 描述 |
 | --- | --- | --- | --- |
-| software | `helloworld` | `software/src` | 编译的软件名称 |
 | world | `terraria_computer_large` | `hardware/world` | 使用的世界名称 |
 | cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
 | driver | `6.96K` | `hardware/wiring/driver` | 使用的驱动频率大小 |

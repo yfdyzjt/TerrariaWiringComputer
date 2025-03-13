@@ -13,7 +13,7 @@ local function _templink(target)
         end
     end
 
-    local outdata, errdata =os.iorunv(program, argv)
+    local outdata, errdata = os.iorunv(program, argv)
     return temp_link_file
 end
 

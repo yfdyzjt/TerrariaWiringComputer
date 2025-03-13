@@ -29,10 +29,5 @@ SECTIONS
 
 	end = .;
 
-	.io :
-    {
-        *(*.h);
-    } > RAM
-
 	_stack = ORIGIN(RAM) + LENGTH(RAM);
 }

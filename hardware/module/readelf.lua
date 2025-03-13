@@ -7,7 +7,11 @@ function main(elf_file)
 
         section.name, section.size, section.type = line:match("%s+%[%s*%d+%]%s+([%p%w]+)%s+[%p%w]+%s+%x+%s+%x+%s+(%x+)%s+%x+%s+([%w]+)")
         
-        if section.name and section.size and section.type then
+        if  section.name and
+            section.name ~= "NULL" and
+            section.size and 
+            section.type 
+        then
             section.size = tonumber(section.size, 16)
             table.insert(sections, section)
         end

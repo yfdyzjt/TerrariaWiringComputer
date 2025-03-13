@@ -1,3 +1,5 @@
+#ifdef TERMINAL
+
 #include "display_output.h"
 #include "display_96_64.h"
 
@@ -100,3 +102,5 @@ void display_output_print(char c)
         break;
     }
 }
+
+#endif

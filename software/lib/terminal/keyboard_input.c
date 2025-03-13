@@ -1,3 +1,5 @@
+#ifdef TERMINAL
+
 #include "keyboard_input.h"
 #include "keyboard_vertical_87_key.h"
 
@@ -243,3 +245,5 @@ bool keyboard_input_test(ModifierKey mk)
 {
     return modifier_key_test(mk);
 }
+
+#endif

@@ -115,3 +115,4 @@ config = {
 | ram | `4K` | `hardware/wiring/memory/data` | 使用的数据RAM大小 |
 | printf_float | `false` | `-` | 启用浮点数输出支持 |
 | scanf_float | `false` | `-` | 启用浮点数输入支持 |
+| terminal | `false` | `-` | 启用终端输入输出支持 |

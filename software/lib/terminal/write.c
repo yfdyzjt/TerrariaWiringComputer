@@ -1,3 +1,5 @@
+#ifdef TERMINAL
+
 #include "display_output.h"
 
 #include <errno.h>
@@ -16,3 +18,5 @@ int _write(int file, char *ptr, int len)
     errno = EBADF;
     return -1;
 }
+
+#endif

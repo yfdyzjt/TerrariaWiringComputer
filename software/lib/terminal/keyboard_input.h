@@ -1,3 +1,4 @@
+#ifdef TERMINAL
 #ifndef KEYBOARD_INPUT
 #define KEYBOARD_INPUT
 
@@ -17,4 +18,5 @@ void keyboard_input_init();
 char keyboard_input_scan();
 bool keyboard_input_test(ModifierKey mk);
 
+#endif
 #endif

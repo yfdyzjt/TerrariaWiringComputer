@@ -31,6 +31,7 @@ target("system")
     cur_config.ram = "4K"
     cur_config.printf_float = false
     cur_config.scanf_float = false
+    cur_config.terminal = false
 
     if cur_config.software then
         local sub_path = "software/src/" .. cur_config.software .. "/xmake.lua"
@@ -43,6 +44,7 @@ target("system")
                 if config.ram ~= nil then cur_config.ram = config.ram end
                 if config.printf_float ~= nil then cur_config.printf_float = config.printf_float end
                 if config.scanf_float ~= nil then cur_config.scanf_float = config.scanf_float end
+                if config.terminal ~= nil then cur_config.terminal = config.terminal end
             end
         end
 
@@ -67,6 +69,7 @@ target("system")
         add_ldflags("-Wl,-T,./system/" .. cur_config.software .. "_link.ld")
         if cur_config.printf_float then add_ldflags("-Wl,-u,_printf_float") end
         if cur_config.scanf_float then add_ldflags("-Wl,-u,_scanf_float") end
+        if cur_config.terminal then add_defines("TERMINAL") end
 
         before_build(
             function (target)

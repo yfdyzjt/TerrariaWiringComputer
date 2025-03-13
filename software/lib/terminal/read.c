@@ -1,3 +1,5 @@
+#ifdef TERMINAL
+
 #include "keyboard_input.h"
 #include "display_output.h"
 
@@ -35,3 +37,5 @@ int _read(int file, char *ptr, int len)
     errno = EBADF;
     return -1;
 }
+
+#endif

@@ -113,5 +113,6 @@ config = {
 | cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
 | driver | `6.96K` | `hardware/wiring/driver` | Value of the drive frequency |
 | ram | `4K` | `hardware/wiring/memory/data` | Size of the data RAM |
-| printf_float | `false` | `-` | Enable floating point printf support |
-| scanf_float | `false` | `-` | Enable floating point scanf support |
+| printf_float | `false` | `-` | Enable floating point output support |
+| scanf_float | `false` | `-` | Enable floating point input support |
+| terminal | `false` | `-` | Enable terminal input and output support |

@@ -27,7 +27,7 @@ int main()
         {
             printf("  %s\n", input);
             printf("  %*s^\n", error - 1, "");
-            printf("syntax error: %d\n", error);
+            printf("syntax error:\"%c\"\n", input[error - 1]);
         }
         else
         {

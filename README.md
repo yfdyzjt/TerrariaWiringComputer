@@ -110,7 +110,7 @@ config = {
 | Config Key | Default Value | Path | Description |
 | ---- | ---- | ---- | ---- |
 | world | `terraria_computer_large` | `hardware/world` | Name of the world |
-| cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
+| cpu | `cpu_cs100c_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
 | driver | `6.96K` | `hardware/wiring/driver` | Value of the drive frequency |
 | ram | `4K` | `hardware/wiring/memory/data` | Size of the data RAM |
 | printf_float | `false` | `-` | Enable floating point output support |

@@ -110,7 +110,7 @@ config = {
 | 配置项 | 默认值 | 路径 | 描述 |
 | --- | --- | --- | --- |
 | world | `terraria_computer_large` | `hardware/world` | 使用的世界名称 |
-| cpu | `cpu_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
+| cpu | `cpu_cs100c_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
 | driver | `6.96K` | `hardware/wiring/driver` | 使用的驱动频率大小 |
 | ram | `4K` | `hardware/wiring/memory/data` | 使用的数据RAM大小 |
 | printf_float | `false` | `-` | 启用浮点数输出支持 |

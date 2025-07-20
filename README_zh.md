@@ -67,6 +67,8 @@ docker pull yfdyzjt/terraria-wiring-computer
 startup
 ```
 
+*执行 `startup.bat` 或 `startup.sh`*
+
 ### 安装电路加速模组 WireShark （可选） 
 
 如果电路运行缓慢，可以使用电路加速模组 [WireShark](https://github.com/cc004/wireshark "WireShark") ，该模组可预加载电路，在不改变电路逻辑的情况下提高电路部分代码的执行效率
@@ -88,6 +90,8 @@ xmake
 ```bash
 copy_world
 ```
+
+*执行 `copy_world.bat` 或 `copy_world.sh`*
 
 ### 配置
 

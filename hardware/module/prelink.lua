@@ -5,7 +5,7 @@ local function _templink(target)
     local program, argv = linker.linkargv(target:targetkind(), target:sourcekinds(), target:objectfiles(), target:targetfile(), {target = target})
                 
     for i, _ in ipairs(argv) do
-        if string.find(argv[i], "%-Wl,%-T,%./system/.+_link%.ld$", 1, false) then
+        if string.find(argv[i], "%-Wl,%-T,%./system/link/.+_link%.ld$", 1, false) then
             argv[i] = "-Wl,-T,./hardware/module/temp_link.ld"
         elseif string.find(argv[i], target:targetfile(), 1, true) then
             argv[i] = string.gsub(argv[i], "(%.elf)$", "_temp%1")

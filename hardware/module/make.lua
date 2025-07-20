@@ -27,13 +27,13 @@ local function MakeSch(part, bin)
 end
 
 function MakeWorld(worldName, softwareName)
-    local parts_str = File.ReadAllText("./system/" .. softwareName .. "_part.lua")
+    local parts_str = File.ReadAllText("./system/part/" .. softwareName .. "_part.lua")
     local parts = table.FromLson(parts_str)
 
     print("Start load world: " .. worldName)
     local world = LoadWorld("./hardware/world/" .. worldName .. ".wld")
 
-    local fs = FileStream("./system/" .. softwareName .. ".bin", FileMode.Open)
+    local fs = FileStream("./system/bin/" .. softwareName .. ".bin", FileMode.Open)
     local br = BinaryReader(fs)
     for _, part in ipairs(parts) do
         print("Start make part: " .. part.name)
@@ -47,5 +47,5 @@ function MakeWorld(worldName, softwareName)
 
     print("Start save world")
     world.Name = world.Name .. "_" .. softwareName
-    SaveWorld(world, "./system/" .. world.Name .. ".wld")
+    SaveWorld(world, "./system/world/" .. world.Name .. ".wld")
 end

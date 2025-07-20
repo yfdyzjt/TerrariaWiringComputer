@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ ! -d "./system" ]; then
-    echo "./system not exist, use xmake to build"
+if [ ! -d " ./system/world" ]; then
+    echo " ./system/world not exist, use xmake to build"
     exit 1
 fi
 
-world_files=$(find ./system -name "*.wld")
+world_files=$(find  ./system/world -name "*.wld")
 if [ -z "$world_files" ]; then
-    echo "./system/*.wld not exist, use xmake to build"
+    echo " ./system/world/*.wld not exist, use xmake to build"
     exit 1
 fi
 

@@ -67,6 +67,8 @@ docker pull yfdyzjt/terraria-wiring-computer
 startup
 ```
 
+*Run `startup.bat` or `startup.sh` .*
+
 #### Install WireShark circuit acceleration mod (optional)
 
 If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration mod, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
@@ -88,6 +90,8 @@ Execute the following command in the project directory to copy the generated wor
 ```bash
 copy_world
 ```
+
+*Run `copy_world.bat` or `copy_world.sh` .*
 
 ### Configuration
 

@@ -51,7 +51,7 @@ target("system")
         local parts = {}
 
         set_kind("binary") 
-        set_targetdir("system")
+        set_targetdir("system/elf")
         set_filename(cur_config.software .. ".elf")
         set_strip("none")
 
@@ -66,16 +66,19 @@ target("system")
         add_includedirs("software/src/" .. cur_config.software)  
         add_files("software/src/" .. cur_config.software .. "/**.c")
 
-        add_ldflags("-Wl,-T,./system/" .. cur_config.software .. "_link.ld")
+        add_ldflags("-Wl,-T,./system/link/" .. cur_config.software .. "_link.ld")
         if cur_config.printf_float then add_ldflags("-Wl,-u,_printf_float") end
         if cur_config.scanf_float then add_ldflags("-Wl,-u,_scanf_float") end
         if cur_config.terminal then add_defines("TERMINAL") end
 
         before_build(
             function (target)
-                if not os.isdir("./system") then
-                    os.mkdir("./system")
-                end
+                if not os.isdir("./system") then os.mkdir("./system") end
+                if not os.isdir("./system/bin") then os.mkdir("./system/bin") end
+                if not os.isdir("./system/elf") then os.mkdir("./system/elf") end
+                if not os.isdir("./system/link") then os.mkdir("./system/link") end
+                if not os.isdir("./system/part") then os.mkdir("./system/part") end
+                if not os.isdir("./system/world") then os.mkdir("./system/world") end
             end
         )
 
@@ -91,15 +94,15 @@ target("system")
                 ser_parts, mem_parts = combiepart(parts, cur_config)
                 link_script = linkscript(mem_parts)
 
-                io.writefile("./system/" .. cur_config.software .. "_link.ld", link_script)
-                io.save("./system/" .. cur_config.software .. "_part.lua", ser_parts)
+                io.writefile("./system/link/" .. cur_config.software .. "_link.ld", link_script)
+                io.save("./system/part/" .. cur_config.software .. "_part.lua", ser_parts)
             end
         )
     
         after_build(
             function (target)
                 local target_file = target:targetfile()
-                local final_file = target_file:gsub("%.elf$", ".bin")
+                local final_file = target_file:gsub("/elf/", "/bin/"):gsub("%.elf$", ".bin")
                 
                 os.execv("riscv-none-elf-objcopy", {"-O", "binary", target_file, final_file})
                 -- os.execv("riscv-none-elf-size", {"-Ad", target_file})

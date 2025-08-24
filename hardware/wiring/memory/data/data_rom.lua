@@ -4,7 +4,7 @@ function Write(sch, bin, maxLine : int, maxRow : int, offsetX : int, offsetY : i
 
 	for line = 0, maxLine - 1, 1 do
 		for color = 0, 3, 1 do
-			y = offsetY + (line + ((color == 2 or color == 3) and 1 or 0)) * 3
+			y = offsetY + line * 3
 			for row = 0, maxRow - 1, 1 do
 				for dir = -1, 1, 2 do
 					local data : int = 0

@@ -69,9 +69,9 @@ startup
 
 *Run `startup.bat` or `startup.sh` .*
 
-#### Install WireShark circuit acceleration mod (optional)
+#### Install WireShark wiring acceleration mod (optional)
 
-If the circuit runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") circuit acceleration mod, which can preload circuits to improve the execution efficiency of some circuit codes without changing the circuit logic.
+If the wiring runs slowly, you can use the [WireShark](https://github.com/cc004/wireshark "WireShark") wiring acceleration mod, which can preload wirings to improve the execution efficiency of some wiring codes without changing the wiring logic.
 
 ## Usage
 

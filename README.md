@@ -30,7 +30,7 @@
   
   <br/>
   <b>RISC-V 32-bit computer made by wiring in vanilla Terraria</b><br/>
-  <i>Modular Computer Systems: Simple, Flexible, Open High Performance and High Density Circuits</i><br/>
+  <i>Modular Computer Systems: Simple, Flexible, Open High Performance and High Density Wirings</i><br/>
 </div>
 
 ## Introduction ([中文](/README_zh.md))
@@ -43,7 +43,7 @@ Terraria Wiring Computer is a RISC-V 32-bit computer based on [Terraria](https:/
 
 - Uses [tmake](https://github.com/yfdyzjt/TMake "tmake") + [xmake](https://github.com/xmake-io/xmake "xmake") scripts to build hardware and software, powerful and convenient;
 
-- Optimized for circuit area and performance, aiming to explore the limits of Terraria wiring.
+- Optimized for wiring area and performance, aiming to explore the limits of Terraria wiring.
 
 ## Installation
 

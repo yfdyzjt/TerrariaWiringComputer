@@ -28,7 +28,7 @@ target("system")
     cur_config.world = "terraria_computer_large"
     cur_config.cpu = "cpu_cs100c_rv32imc"
     cur_config.driver = "6.96K"
-    cur_config.ram = "4K"
+    cur_config.stack = "1K"
     cur_config.printf_float = false
     cur_config.scanf_float = false
     cur_config.terminal = false
@@ -41,7 +41,7 @@ target("system")
                 if config.world ~= nil then cur_config.world = config.world end
                 if config.cpu ~= nil then cur_config.cpu = config.cpu end
                 if config.driver ~= nil then cur_config.driver = config.driver end
-                if config.ram ~= nil then cur_config.ram = config.ram end
+                if config.stack ~= nil then cur_config.stack = config.stack end
                 if config.printf_float ~= nil then cur_config.printf_float = config.printf_float end
                 if config.scanf_float ~= nil then cur_config.scanf_float = config.scanf_float end
                 if config.terminal ~= nil then cur_config.terminal = config.terminal end

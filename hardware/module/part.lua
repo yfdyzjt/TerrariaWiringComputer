@@ -42,14 +42,17 @@ function main(sections, config)
     local parts = {}
     local origin = 0
     local size = part_utils.sections_size(sections)
-    local data_size = part_utils.parse_size(config.ram)
+    local stack_size = part_utils.parse_size(config.stack)
     local driver_freq = part_utils.parse_freq(config.driver)
 
-    if size.data > data_size then raise("ram cannot hold data.") end
     parts.text, origin = _get_ins_mem(size.text, origin)
-    local have_data_rom = size.rodata >= data_size / 2 and size.data < data_size / 2
-    if have_data_rom then parts.rodata, origin = _get_rodata_mem(size.rodata, origin) end
-    parts.data, origin = _get_data_mem(data_size, origin)
+    local have_data_rom = size.rodata >= (size.rodata + size.data + stack_size) / 2
+    if have_data_rom then 
+        parts.rodata, origin = _get_rodata_mem(size.rodata, origin) 
+        parts.data, origin = _get_data_mem(size.data + stack_size, origin)
+    else
+        parts.data, origin = _get_data_mem(size.rodata + size.data + stack_size, origin)
+    end
     parts.io, origin = _get_io_mem(sections, origin)
     parts.driver = _get_driver(driver_freq)
 

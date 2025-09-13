@@ -116,7 +116,7 @@ config = {
 | world | `terraria_computer_large` | `hardware/world` | 使用的世界名称 |
 | cpu | `cpu_cs100c_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
 | driver | `6.96K` | `hardware/wiring/driver` | 使用的驱动频率大小 |
-| ram | `4K` | `hardware/wiring/memory/data` | 使用的数据RAM大小 |
+| stack | `1K` | `-` | 使用的堆栈大小 |
 | printf_float | `false` | `-` | 启用浮点数输出支持 |
 | scanf_float | `false` | `-` | 启用浮点数输入支持 |
 | terminal | `false` | `-` | 启用终端输入输出支持 |

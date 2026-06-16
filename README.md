@@ -113,7 +113,7 @@ config = {
 
 | Config Key | Default Value | Path | Description |
 | ---- | ---- | ---- | ---- |
-| world | `terraria_computer_large` | `hardware/world` | Name of the world |
+| world | `twc` | `hardware/world` | Name of the world |
 | cpu | `cpu_cs100c_rv32imc` | `hardware/wiring/cpu` | Name of the CPU |
 | driver | `6.96K` | `hardware/wiring/driver` | Value of the drive frequency |
 | stack | `1K` | `-` | Size of the data stack |

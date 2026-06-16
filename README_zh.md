@@ -113,7 +113,7 @@ config = {
 
 | 配置项 | 默认值 | 路径 | 描述 |
 | --- | --- | --- | --- |
-| world | `terraria_computer_large` | `hardware/world` | 使用的世界名称 |
+| world | `twc` | `hardware/world` | 使用的世界名称 |
 | cpu | `cpu_cs100c_rv32imc` | `hardware/wiring/cpu` | 使用的CPU名称 |
 | driver | `6.96K` | `hardware/wiring/driver` | 使用的驱动频率大小 |
 | stack | `1K` | `-` | 使用的堆栈大小 |

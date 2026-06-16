@@ -25,7 +25,7 @@ target("system")
 
     local cur_config = {}
     cur_config.software = get_config("s")
-    cur_config.world = "terraria_computer_large"
+    cur_config.world = "twc"
     cur_config.cpu = "cpu_cs100c_rv32imc"
     cur_config.driver = "6.96K"
     cur_config.stack = "1K"

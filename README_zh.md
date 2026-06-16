@@ -2,29 +2,17 @@
   <h1>泰拉瑞亚电路计算机</h1>
 
   <div>
-    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/yfdyzjt/TerrariaWiringComputer" alt="license" />
-    </a>
-    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/issues">
-    <img src="https://img.shields.io/github/issues/yfdyzjt/TerrariaWiringComputer" alt="issues" />
-    </a>
-    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer">
-    <img src="https://img.shields.io/github/stars/yfdyzjt/TerrariaWiringComputer?style=flat" alt="star" />
-    </a>
-    <a href="https://github.com/yfdyzjt/TerrariaWiringComputer/pulls">
-    <img src="https://img.shields.io/github/forks/yfdyzjt/TerrariaWiringComputer?style=flat" alt="fork" />
-    </a>
-  </div>
-
-  <div>
     <a href="https://space.bilibili.com/22871583">
     <img src="https://img.shields.io/badge/video-bilibili-00a2d8.svg" alt="bilibili" />
     </a>
     <a href="https://qm.qq.com/q/ZXDnybyQcE">
     <img src="https://img.shields.io/badge/chat-QQ-e91f1f.svg" alt="QQ" />
     </a>
-    <a href="https://discord.gg/s6xbNqrUY2">
+    <a href="https://discord.gg/qby8FSkHAW">
     <img src="https://img.shields.io/badge/chat-discord-5865f2.svg" alt="discord" />
+    </a>
+    <a href="https://steamcommunity.com/id/yfdyzjt">
+    <img src="https://img.shields.io/badge/steam-000000.svg?logo=steam&logoColor=white" alt="steam" />
     </a>
   </div>
   

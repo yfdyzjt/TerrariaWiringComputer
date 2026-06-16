@@ -3,16 +3,16 @@
 
   <div>
     <a href="https://space.bilibili.com/22871583">
-    <img src="https://img.shields.io/badge/video-bilibili-00a2d8.svg" alt="bilibili" />
-    </a>
-    <a href="https://qm.qq.com/q/ZXDnybyQcE">
-    <img src="https://img.shields.io/badge/chat-QQ-e91f1f.svg" alt="QQ" />
-    </a>
-    <a href="https://discord.gg/qby8FSkHAW">
-    <img src="https://img.shields.io/badge/chat-discord-5865f2.svg" alt="discord" />
+    <img src="https://img.shields.io/badge/home-bilibili-00a2d8.svg" alt="bilibili" />
     </a>
     <a href="https://steamcommunity.com/id/yfdyzjt">
-    <img src="https://img.shields.io/badge/steam-000000.svg?logo=steam&logoColor=white" alt="steam" />
+    <img src="https://img.shields.io/badge/home-steam-23272f.svg" alt="steam" />
+    </a>
+    <a href="https://qm.qq.com/q/ZXDnybyQcE">
+    <img src="https://img.shields.io/badge/group-QQ-e91f1f.svg" alt="QQ" />
+    </a>
+    <a href="https://discord.gg/qby8FSkHAW">
+    <img src="https://img.shields.io/badge/group-discord-5865f2.svg" alt="discord" />
     </a>
   </div>
   

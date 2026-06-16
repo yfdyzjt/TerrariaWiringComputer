@@ -129,24 +129,24 @@ local function PasteParts(world, parts, positions)
     end
 end
 
-function Link(world, parts)
+function Link(world, parts, worldEnv)
     local UNUSABLE = 2
     local INV_TOP, INV_LEFT, INV_BOTTOM, INV_RIGHT = 41, 41, 42, 42
 
-    local iopos_x, iopos_y = world.env.IOPos[1], world.env.IOPos[2]
+    local iopos_x, iopos_y = worldEnv.IOPos[1], worldEnv.IOPos[2]
 
     local input_parts = ExtractParts(parts, "input")
     SortParts(input_parts, SortByWidth)
-    local in_pos, in_w, in_h, in_ok = PackRects(input_parts, iopos_x - UNUSABLE, iopos_y - UNUSABLE, 0, 0)
+    local in_pos, in_w, in_h, in_ok = PackRects(input_parts, iopos_x - UNUSABLE + 1, iopos_y - UNUSABLE + 1, 0, 0)
 
     local output_parts = ExtractParts(parts, "output")
     SortParts(output_parts, SortByWidth)
-    local out_pos, out_w, out_h, out_ok = PackRects(output_parts, world.MaxTilesX - (iopos_x + 1) - UNUSABLE, iopos_y - UNUSABLE, 0, 0)
+    local out_pos, out_w, out_h, out_ok = PackRects(output_parts, world.MaxTilesX - (iopos_x + 1) - UNUSABLE + 1, iopos_y - UNUSABLE + 1, 0, 0)
 
     SortParts(parts, SortByArea)
 
     local io_width = iopos_x + out_w + 1
-    local io_height = world.MaxTilesY - iopos_y - 1 + math.max(in_h, out_h)
+    local io_height = world.MaxTilesY - (iopos_y + 1) + math.max(in_h, out_h)
 
     local max_w = world.MaxTilesX - INV_LEFT - INV_RIGHT
     local max_h = world.MaxTilesY - INV_TOP - INV_BOTTOM
@@ -155,6 +155,7 @@ function Link(world, parts)
     local other_area_x, other_area_y = INV_LEFT, world.MaxTilesY - 1 - INV_BOTTOM
 
     if not other_ok then
+        print("Visible area full, using invisible area.")
         max_w = world.MaxTilesX - 2 * UNUSABLE
         max_h = world.MaxTilesY - 2 * UNUSABLE
         pre_w, pre_h = io_width - UNUSABLE, io_height - UNUSABLE

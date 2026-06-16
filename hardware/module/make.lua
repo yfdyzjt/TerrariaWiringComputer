@@ -32,8 +32,9 @@ function MakeWorld(worldName, softwareName)
 
     print("Start load world: " .. worldName)
     local world = LoadWorld("./hardware/world/" .. worldName .. ".wld")
+    local worldEnv = {}
     if Directory.GetFiles("./hardware/world/", worldName .. ".lua", SearchOption.AllDirectories).Length ~= 0 then
-        world.env = Include(self, "./hardware/world/" .. worldName .. ".lua")
+        worldEnv = Include(self, "./hardware/world/" .. worldName .. ".lua")
     end
 
     local fs = FileStream("./system/bin/" .. softwareName .. ".bin", FileMode.Open)
@@ -46,7 +47,7 @@ function MakeWorld(worldName, softwareName)
     fs.Close()
 
     print("Start link part to world")
-    Include(self, "./hardware/module/linkworld.lua").Link(world, parts)
+    Include(self, "./hardware/module/linkworld.lua").Link(world, parts, worldEnv)
 
     print("Start save world")
     world.Name = world.Name .. "_" .. softwareName

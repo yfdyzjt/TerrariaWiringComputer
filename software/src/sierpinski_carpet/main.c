@@ -8,6 +8,7 @@ int main()
     int draw, nx, ny;
 
     for (int y = 0; y < DRAW_SIZE_Y; y++)
+    {
         for (int x = 0; x < DRAW_SIZE_X; x++)
         {
             draw = 1;
@@ -20,8 +21,9 @@ int main()
                 }
 
             draw_pixel(x, y, draw);
-            display_refresh();
         }
+        display_refresh();
+    }
 
     return 0;
 }

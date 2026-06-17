@@ -25,6 +25,13 @@ void set_pixel(int x, int y, unsigned char pixel)
     draw_pixel(x - (MAX_SIZE_X - DISPLAY_SIZE_X) / 2, y, pixel);
 }
 
+void wolfram_reset()
+{
+    display_clear();
+    for (int i = 0; i < (int)sizeof(statue); i++)
+        ((unsigned char *)statue)[i] = 0;
+}
+
 void wolfram_automaton(int rule)
 {
     unsigned char pattern, next_state;
@@ -52,10 +59,8 @@ int main()
 {
     int rule = 30;
 
-    // rule 30
-    // rule 90
-    // rule 110
-
+    wolfram_reset();
     wolfram_automaton(rule);
+
     return 0;
 }

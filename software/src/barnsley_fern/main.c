@@ -31,6 +31,7 @@
 #define E4 FLOAT_TO_FIXED(0.00)
 #define F4 FLOAT_TO_FIXED(0.44)
 
+// Screen: fern y-axis (growth, 0~10) -> screen x (0~95), fern x-axis (spread, -2.5~2.5) -> screen y (0~63)
 #define Y_TO_X_SCALE FLOAT_TO_FIXED(9.6)    // 96 / 10
 #define X_TO_Y_SCALE FLOAT_TO_FIXED(12.8)   // 64 / 5
 

@@ -16,9 +16,9 @@ local function _combine_mem_parts(memory, parts)
     end
 end
 
-local function _have_input(io_parts)
+local function _have_prior_input(io_parts)
     for _, part in ipairs(io_parts) do
-        if part.type == "input" then
+        if part.type == "input" and part.env and part.env.PriorPlace then
             return true
         end
     end
@@ -39,7 +39,7 @@ function main(parts, config)
     if parts.rodata then _combine_parts(ser_parts, parts.rodata) end
     if parts.data then _combine_parts(ser_parts, parts.data) end
     if parts.io then _combine_parts(ser_parts, parts.io) end
-    if parts.io and not _have_input(parts.io) then
+    if parts.io and not _have_prior_input(parts.io) then
         table.insert(ser_parts, {name = "power_switch", file = "power_switch", type = "input"})
     end
     if parts.driver then _combine_parts(ser_parts, parts.driver) end

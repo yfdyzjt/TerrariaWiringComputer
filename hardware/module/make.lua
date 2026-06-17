@@ -50,6 +50,6 @@ function MakeWorld(worldName, softwareName)
     Include(self, "./hardware/module/linkworld.lua").Link(world, parts, worldEnv)
 
     print("Start save world")
-    world.Name = world.Name .. "_" .. softwareName
+    world.Name = world.Name .. softwareName
     SaveWorld(world, "./system/world/" .. world.Name .. ".wld")
 end

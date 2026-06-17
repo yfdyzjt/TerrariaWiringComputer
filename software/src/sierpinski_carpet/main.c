@@ -20,8 +20,8 @@ int main()
                 }
 
             draw_pixel(x, y, draw);
+            display_refresh();
         }
 
-    display_refresh();
     return 0;
 }

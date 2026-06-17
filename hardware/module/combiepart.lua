@@ -18,8 +18,14 @@ end
 
 local function _have_prior_input(io_parts)
     for _, part in ipairs(io_parts) do
-        if part.type == "input" and part.env and part.env.PriorPlace then
-            return true
+        if part.type == "input" then
+            local env_file = "hardware/wiring/" .. part.type .. "/" .. part.file .. ".lua"
+            if os.isfile(env_file) then
+                local content = io.readfile(env_file)
+                if content and content:find("PriorPlace%s*=%s*true") then
+                    return true
+                end
+            end
         end
     end
     return false

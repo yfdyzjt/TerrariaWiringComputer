@@ -30,7 +30,7 @@ fixed cube_vertices[8][3] = {
 
 void project(fixed x, fixed y, fixed z, int *screen_x, int *screen_y)
 {
-    fixed distance = FLOAT_TO_FIXED(4);
+    fixed distance = FLOAT_TO_FIXED(2.5);
     fixed inv_z = FIXED_DIV(FLOAT_TO_FIXED(1), z + distance);
 
     *screen_x = DISPLAY_CENTER_X + FIXED_TO_INT(FIXED_MUL(x, inv_z) * DISPLAY_CENTER_Y);
@@ -89,9 +89,9 @@ int main()
         draw_cube(angle_x, angle_y, angle_z);
         display_refresh();
 
-        angle_x = (angle_x + 1) % 360;
-        angle_y = (angle_y + 1) % 360;
-        angle_z = (angle_z + 1) % 360;
+        angle_x = (angle_x + 3) % 360;
+        angle_y = (angle_y + 2) % 360;
+        angle_z = (angle_z + 5) % 360;
     }
 
     return 0;

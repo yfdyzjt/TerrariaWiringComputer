@@ -107,9 +107,9 @@ int main()
         display_clear();
         draw_tetrahedron(angle_x, angle_y, angle_z);
         display_refresh();
-        angle_x = (angle_x + 1) % 360;
-        angle_y = (angle_y + 1) % 360;
-        angle_z = (angle_z + 1) % 360;
+        angle_x = (angle_x + 3) % 360;
+        angle_y = (angle_y + 2) % 360;
+        angle_z = (angle_z + 5) % 360;
     }
     return 0;
 }

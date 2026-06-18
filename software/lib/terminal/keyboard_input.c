@@ -1,6 +1,6 @@
 #ifdef TERMINAL
 
-#include "keyboard_input.h"
+#include "terminal/keyboard_input.h"
 #include "keyboard_vertical_87_key.h"
 
 #include <stdbool.h>

@@ -1,6 +1,6 @@
 #ifdef TERMINAL
 
-#include "display_output.h"
+#include "terminal/display_output.h"
 #include "display_96_64.h"
 
 #include <stdint.h>

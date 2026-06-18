@@ -1,7 +1,7 @@
 #ifdef TERMINAL
 
-#include "keyboard_input.h"
-#include "display_output.h"
+#include "terminal/keyboard_input.h"
+#include "terminal/display_output.h"
 
 #include <errno.h>
 #undef errno

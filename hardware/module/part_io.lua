@@ -16,7 +16,8 @@ function main(sections)
                 io_part.length = section.size
                 io_part.rwx = section.type:gsub("A", "r"):gsub("W", "w"):gsub("X", "x"):gsub("[^rwx]", "")
 
-                if string.find(io_part.rwx, "w") then
+                -- if string.find(io_part.rwx, "w") then
+                if os.isfile(output_file) then
                     io_part.type = "output"
                 else
                     io_part.type = "input"

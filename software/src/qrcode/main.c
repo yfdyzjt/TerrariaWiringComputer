@@ -7,7 +7,7 @@ static void qrcode_print(QRCode qrcode, const char *text);
 
 int main()
 {
-    char *text = "HELLO WORLD";
+    char *text = "The quick brown fox jumps over the lazy dog";
 
     uint8_t ecc = ECC_LOW;
     uint8_t version = qrcode_getMinimumVersion(text, ecc);

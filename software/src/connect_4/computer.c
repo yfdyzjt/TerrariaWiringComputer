@@ -8,7 +8,7 @@
 #include "output.h"
 
 #define INF 1000000
-#define MAX_DEPTH 6
+#define MAX_DEPTH 2
 
 static int32_t evaluate_window(int32_t count_ai, int32_t count_opp)
 {

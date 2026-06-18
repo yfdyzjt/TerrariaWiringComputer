@@ -1,4 +1,5 @@
 function Write(sch, bin, maxLine : int, maxRow : int, offsetX : table, offsetY : table)
+	-- TODO: Need to fix INS 64KB ROM wiring issue.
 	local x : int = 0
 	local y : int = 0
 
@@ -11,18 +12,23 @@ function Write(sch, bin, maxLine : int, maxRow : int, offsetX : table, offsetY :
 			for line = 0, maxLine - 1, 1 do
 				for color = 0, 3, 1 do
 					for cell = 1, 2, 1 do
-						if bin.BaseStream.Position >= bin.BaseStream.Length then
-							data = 0
-						elseif long_ins then
+						if long_ins then
 							data = long_ins_high
 							long_ins = false
+						elseif bin.BaseStream.Position + 2 > bin.BaseStream.Length then
+							data = 0
 						elseif (bin.ReadUInt16() & 3) == 3 then
 							bin.BaseStream.Position = bin.BaseStream.Position - 2
-							local full : uint = bin.ReadUInt32()
-							full = Tool.BinaryToInvGrayCode(full)
-							data = full & 0xFFFF
-							long_ins_high = (full >> 16) & 0xFFFF
-							long_ins = true
+							if bin.BaseStream.Position + 4 > bin.BaseStream.Length then
+								data = 0
+								bin.BaseStream.Position = bin.BaseStream.Length
+							else
+								local full : uint = bin.ReadUInt32()
+								full = Tool.BinaryToInvGrayCode(full)
+								data = full & 0xFFFF
+								long_ins_high = (full >> 16) & 0xFFFF
+								long_ins = true
+							end
 						else
 							bin.BaseStream.Position = bin.BaseStream.Position - 2
 							data = bin.ReadUInt16()
